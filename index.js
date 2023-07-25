@@ -91,7 +91,7 @@ app.get('/', async (req, res) => {
     res.status(500).send('Error al obtener los datos');
   }
 });
-
+//asd
 app.get('/data', async (req, res) => {
   try {
     const query = `
