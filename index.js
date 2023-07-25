@@ -59,6 +59,7 @@ async function fetchDataAndInsert() {
   }
 }
 
+// asd
 fetchDataAndInsert();
 setInterval(fetchDataAndInsert, 5000);
 
