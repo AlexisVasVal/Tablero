@@ -52,7 +52,7 @@ async function getDataAndInsert(table, url, columns) {
 
 async function fetchDataAndInsert() {
   try {
-    await getDataAndInsert('itinera', 'https://script.google.com/macros/s/AKfycbyohzVQkSkzNyIBmQETcTb7dQUPGWN-sIvfS2xQ7oW6qe_jslZYalprSoHsg0ycehy60A/exec', ['vuelo', 'aer', 'orig', 'v_arr', 'ato', 'v_dep', 'sta', 'stdd', 'dest', 'stat']);
+    await getDataAndInsert('itinera', 'https://script.google.com/macros/s/AKfycbyd4POhnW00wDk9cHgdNI-UDnTQFTV2XYzc9hsSvPLo3MuS2DwCO0tu0K29ElQ3G1xUDw/exec', ['vuelo', 'aer', 'orig', 'v_arr', 'ato', 'v_dep', 'sta', 'stdd', 'dest', 'stat']);
     // Agrega aquí las llamadas a otras funciones para obtener e insertar en otras tablas.
   } catch (error) {
     console.error('Error al obtener o insertar datos:', error);
