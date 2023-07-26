@@ -83,7 +83,7 @@ app.get('/', async (req, res) => {
     res.render('index', { data: rows });
   } catch (error) {
     console.error('Error al obtener los datos:', error);
-    res.status(500).send('Error al obtener los datos');
+    res.status(500).send('Error al obtener los datossss');
   }
 });
 
@@ -109,7 +109,7 @@ app.get('/data', async (req, res) => {
 
     res.json({ data: rows });
   } catch (error) {
-    console.error('Error al obtener los datos:', error);
+    console.error('Error al obtener los datosssss:', error);
     res.status(500).send('Error al obtener los datossss');
   }
 });
