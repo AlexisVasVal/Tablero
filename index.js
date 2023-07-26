@@ -110,7 +110,7 @@ app.get('/data', async (req, res) => {
     res.json({ data: rows });
   } catch (error) {
     console.error('NO SALE PS 3:', error);
-    res.status(500).send('NO SALE PS 3');
+    res.status(500).send('NO SALE PS 4');
   }
 });
 
