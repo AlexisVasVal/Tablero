@@ -72,9 +72,6 @@ app.get('/', async (req, res) => {
       evacab e ON i.vuelo = e.vuelo
       LEFT JOIN
       datosgenerales d ON i.vuelo = d.vuelo
-      WHERE
-      sta >= NOW() - INTERVAL '10 hours'
-      AND sta <= NOW() + INTERVAL '10 hours'
       ORDER BY sta ASC
     `;
     const result = await pool.query(query);
@@ -99,9 +96,6 @@ app.get('/data', async (req, res) => {
     evacab e ON i.vuelo = e.vuelo
     LEFT JOIN
     datosgenerales d ON i.vuelo = d.vuelo
-    WHERE
-    sta >= NOW() - INTERVAL '10 hours'
-    AND sta <= NOW() + INTERVAL '10 hours'
     ORDER BY sta ASC
     `;
     const result = await pool.query(query);
