@@ -87,16 +87,16 @@ app.get('/', async (req, res) => {
 app.get('/data', async (req, res) => {
   try {
     const query = `
-    SELECT i.aer, i.sta, d.pea, d.eta, d.ata, i.v_arr, e.res ,e.ho_ini, e.ho_fin,
-    a.res_a ,a.pri_bag, a.ul_bag, a.cie, d.etd, d.atd, d.stat, d.dem
-    FROM itinera i
-    LEFT JOIN
-    aduan a ON a.vuelo = i.vuelo
-    LEFT JOIN
-    evacab e ON i.vuelo = e.vuelo
-    LEFT JOIN
-    datosgenerales d ON i.vuelo = d.vuelo
-    ORDER BY sta ASC
+    SELECT i.aer, to_char(i.sta, 'YYYY/MM/DD HH24:MI:SS') as sta, d.pea, to_char(d.eta, 'YYYY/MM/DD HH24:MI:SS') as eta, to_char(d.ata, 'YYYY/MM/DD HH24:MI:SS') as ata, i.v_arr, e.res, to_char(e.ho_ini, 'YYYY/MM/DD HH24:MI:SS') as ho_ini, to_char(e.ho_fin, 'YYYY/MM/DD HH24:MI:SS') as ho_fin,
+      a.res_a ,a.pri_bag, a.ul_bag, a.cie, to_char(d.etd, 'YYYY/MM/DD HH24:MI:SS') as etd, to_char(d.atd, 'YYYY/MM/DD HH24:MI:SS') as atd, d.stat, d.dem
+      FROM itinera i
+      LEFT JOIN
+      aduan a ON a.vuelo = i.vuelo
+      LEFT JOIN
+      evacab e ON i.vuelo = e.vuelo
+      LEFT JOIN
+      datosgenerales d ON i.vuelo = d.vuelo
+      ORDER BY sta ASC
     `;
     const result = await pool.query(query);
     const rows = result.rows;
