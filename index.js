@@ -23,6 +23,12 @@ async function getDataAndInsert(table, url, columns) {
 
     for (const row of jsonData.data) {
       try {
+        // Convertir las fechas de DD/MM/YYYY HH:MI:SS a YYYY/MM/DD HH:MI:SS usando moment.js
+        row.sta = moment(row.sta, 'DD/MM/YYYY HH:mm:ss').format('YYYY/MM/DD HH:mm:ss');
+        row.eta = moment(row.eta, 'DD/MM/YYYY HH:mm:ss').format('YYYY/MM/DD HH:mm:ss');
+        row.ata = moment(row.ata, 'DD/MM/YYYY HH:mm:ss').format('YYYY/MM/DD HH:mm:ss');
+        // ... hacer lo mismo con las demás fechas
+
         const insertQuery = {
           text: `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${columns.map((_, index) => `$${index + 1}`).join(', ')}) ON CONFLICT (${columns[0]}) DO UPDATE SET ${columns.slice(1).map((column, index) => `${column} = $${index + 2}`).join(', ')}`,
           values: columns.map(column => row[column]),
@@ -41,6 +47,7 @@ async function getDataAndInsert(table, url, columns) {
   }
 }
 
+
 async function fetchDataAndInsert() {
   await getDataAndInsert('itinera', 'https://script.google.com/macros/s/AKfycbyd4POhnW00wDk9cHgdNI-UDnTQFTV2XYzc9hsSvPLo3MuS2DwCO0tu0K29ElQ3G1xUDw/exec', ['vuelo', 'aer', 'orig', 'v_arr', 'ato', 'v_dep', 'sta', 'stdd', 'dest', 'stat']);
   //await getDataAndInsert('itinera', 'https://script.google.com/macros/s/AKfycbyUu9UeC608S5ys8nZAKrpO1gt5HnkwcFxyT3swpyqQb0SkinT_rNBUq1_hbH7G-1SUww/exec', ['vuelo', 'aer', 'orig', 'v_arr', 'ato', 'v_dep', 'sta', 'stdd', 'dest', 'stat']);
@@ -50,7 +57,7 @@ async function fetchDataAndInsert() {
 }
 
 fetchDataAndInsert();
-setInterval(fetchDataAndInsert, 5000);
+setInterval(fetchDataAndInsert, 300000);
 
 // Resto del código...
 
