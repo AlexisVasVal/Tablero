@@ -1,6 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const { Pool } = require('pg');
+const moment = require('moment');
 
 const PORT = process.env.PORT || 3001;
 
@@ -23,14 +24,11 @@ async function getDataAndInsert(table, url, columns) {
 
     for (const row of jsonData.data) {
       try {
-        // Convertir las fechas de DD/MM/YYYY HH:MI:SS a YYYY/MM/DD HH:MI:SS usando moment.js
-        row.sta = moment(row.sta, 'DD/MM/YYYY HH:mm:ss').format('YYYY/MM/DD HH:mm:ss');
-        row.eta = moment(row.eta, 'DD/MM/YYYY HH:mm:ss').format('YYYY/MM/DD HH:mm:ss');
-        row.ata = moment(row.ata, 'DD/MM/YYYY HH:mm:ss').format('YYYY/MM/DD HH:mm:ss');
-        // ... hacer lo mismo con las demás fechas
-
         const insertQuery = {
-          text: `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${columns.map((_, index) => `$${index + 1}`).join(', ')}) ON CONFLICT (${columns[0]}) DO UPDATE SET ${columns.slice(1).map((column, index) => `${column} = $${index + 2}`).join(', ')}`,
+          text: `INSERT INTO ${table} (${columns.join(', ')}) 
+                 VALUES (${columns.map((_, index) => `$${index + 1}`).join(', ')}) 
+                 ON CONFLICT (${columns[0]}) DO UPDATE 
+                 SET ${columns.slice(1).map((column, index) => `${column} = $${index + 2}`).join(', ')}`,
           values: columns.map(column => row[column]),
         };
 
@@ -46,6 +44,7 @@ async function getDataAndInsert(table, url, columns) {
     console.error(`Error al obtener el JSON de ${url}:`, error);
   }
 }
+
 
 
 async function fetchDataAndInsert() {
