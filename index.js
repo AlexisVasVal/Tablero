@@ -110,7 +110,7 @@ app.get('/data', async (req, res) => {
     res.json({ data: rows });
   } catch (error) {
     console.error('Error al obtener los datos:', error);
-    res.status(500).send('Error al obtener los datos');
+    res.status(500).send('Error al obtener los datossss');
   }
 });
 
