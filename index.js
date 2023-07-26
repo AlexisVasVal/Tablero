@@ -10,11 +10,11 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
 const pool = new Pool({
-  user:process.env.DB_USER || 'postgres',
-  host:process.env.DB_HOST || 'localhost',
-  database:process.env.DB_NAME || 'tableros',
-  password:process.env.DB_PASSWORD || '123456',
-  port:process.env.DB_PORT || 5432,
+  user: 'postgres',
+  host: 'localhost',
+  database: 'tableros',
+  password: '123456',
+  port: 5432,
 });
 
 async function getDataAndInsert(table, url, columns) {
