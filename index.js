@@ -82,8 +82,8 @@ app.get('/', async (req, res) => {
 
     res.render('index', { data: rows });
   } catch (error) {
-    console.error('Error al obtener los datosssssss:', error);
-    res.status(500).send('Error al obtener los datossss');
+    console.error('NO SALE PS:', error);
+    res.status(500).send('NO SALE PS 2');
   }
 });
 
@@ -109,8 +109,8 @@ app.get('/data', async (req, res) => {
 
     res.json({ data: rows });
   } catch (error) {
-    console.error('Error al obtener los datosssss:', error);
-    res.status(500).send('Error al obtener los datossss');
+    console.error('NO SALE PS 3:', error);
+    res.status(500).send('NO SALE PS 3');
   }
 });
 
