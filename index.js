@@ -1,7 +1,9 @@
+require('dotenv').config();
+
 const express = require('express');
 const axios = require('axios');
 const { Pool } = require('pg');
-const moment = require('moment');
+//const moment = require('moment');
 
 const PORT = process.env.PORT || 3001;
 
@@ -10,11 +12,11 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'tableros',
-  password: '123456',
-  port: 5432,
+  user: process.env.PGUSER,
+  host: process.env.PGHOST,
+  database: process.env.PGDATABASE,
+  password: process.env.PGPASSWORD,
+  port: process.env.PGPORT,
 });
 
 async function getDataAndInsert(table, url, columns) {
@@ -56,7 +58,7 @@ async function fetchDataAndInsert() {
 }
 
 fetchDataAndInsert();
-setInterval(fetchDataAndInsert, 300000);
+setInterval(fetchDataAndInsert, 5000);
 
 // Resto del código...
 
@@ -117,3 +119,4 @@ app.get('/data', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor iniciado en el puerto ${PORT}`);
 });
+
