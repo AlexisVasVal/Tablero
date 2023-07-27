@@ -3,13 +3,12 @@ require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const { Pool } = require('pg');
-//const moment = require('moment');
-
-const PORT = process.env.PORT || 3001;
 
 const app = express();
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
+
+const PORT = process.env.PORT || 3001;
 
 const pool = new Pool({
   user: process.env.PGUSER || "postgres",
@@ -19,19 +18,33 @@ const pool = new Pool({
   port: process.env.PGPORT || "5432",
 });
 
-async function getDataAndInsert(table, url, columns) {
+const timezoneOffset = -300; // Configura el desfase horario a tu zona horaria (en minutos)
+
+app.use((req, res, next) => {
+  req.timezoneOffset = timezoneOffset;
+  next();
+});
+
+async function getDataAndInsert(table, url, columns, timezoneOffset) {
   try {
     const response = await axios.get(url);
     const jsonData = response.data;
 
     for (const row of jsonData.data) {
       try {
+        // Ajustar las fechas con el desfase horario
+        const adjustedRow = {
+          ...row,
+          sta: new Date(new Date(row.sta).getTime() + timezoneOffset * 60000).toISOString(),
+          // Ajusta las demás fechas/horas que necesites
+        };
+
         const insertQuery = {
           text: `INSERT INTO ${table} (${columns.join(', ')}) 
                  VALUES (${columns.map((_, index) => `$${index + 1}`).join(', ')}) 
                  ON CONFLICT (${columns[0]}) DO UPDATE 
                  SET ${columns.slice(1).map((column, index) => `${column} = $${index + 2}`).join(', ')}`,
-          values: columns.map(column => row[column]),
+          values: columns.map(column => adjustedRow[column]),
         };
 
         const result = await pool.query(insertQuery);
@@ -46,8 +59,6 @@ async function getDataAndInsert(table, url, columns) {
     console.error(`Error al obtener el JSON de ${url}:`, error);
   }
 }
-
-
 
 async function fetchDataAndInsert() {
   await getDataAndInsert('itinera', 'https://script.google.com/macros/s/AKfycbzKpWfTXslaCefNC6nkODzCU2MYXg82CEomRZsdBFCdjFYo0kve48sjyVbNw9LWWZQbWA/exec', ['vuelo', 'aer', 'orig', 'v_arr', 'ato', 'v_dep', 'sta', 'stdd', 'dest', 'stat']);
