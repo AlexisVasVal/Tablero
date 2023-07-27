@@ -68,7 +68,7 @@
       <% data.forEach(function(row) { %>
         <tr>
           <td><%= row.aer || '' %></td>
-          <td><%= row.sta ? new row.sta : '' %></td>
+          <td><%= row.sta ? row.sta : '' %></td>
           <td><%= row.pea || '' %></td>
           <td><%= row.eta ? new Date(row.eta).toLocaleString() : '' %></td>
           <td><%= row.ata ? new Date(row.ata).toLocaleString() : '' %></td>
