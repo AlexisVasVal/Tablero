@@ -114,7 +114,7 @@
       var newRow = document.createElement('tr');
       newRow.innerHTML =
         '<td>' + (row.aer ? row.aer : '') + '</td>' +
-        '<td>' + (isValidDate(row.sta) ? row.sta : '') + '</td>' +
+        '<td>' + (row.sta ? row.sta : '') + '</td>' +
         '<td>' + (row.pea ? row.pea : '') + '</td>' +
         '<td>' + (isValidDate(row.eta) ? formatDate(row.eta) : '') + '</td>' +
         '<td>' + (isValidDate(row.ata) ? formatDate(row.ata) : '') + '</td>' +
