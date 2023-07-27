@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Tabla de datos</title>
-  <style>
+    <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -68,10 +68,10 @@
       <% data.forEach(function(row) { %>
         <tr>
           <td><%= row.aer || '' %></td>
-          <td><%= row.sta ? row.sta : '' %></td>
+          <td><%= row.sta ? new Date(row.sta).toLocaleString() : '' %></td>
           <td><%= row.pea || '' %></td>
-          <td><%= row.eta ? row.eta : '' %></td>
-          <td><%= row.ata ? row.ata : '' %></td>
+          <td><%= row.eta ? new Date(row.eta).toLocaleString() : '' %></td>
+          <td><%= row.ata ? new Date(row.ata).toLocaleString() : '' %></td>
           <td><%= row.v_arr || '' %></td>
           <td><%= row.res || '' %></td>
           <td><%= row.ho_ini || '' %></td>
@@ -80,45 +80,73 @@
           <td><%= row.pri_bag || '' %></td>
           <td><%= row.ul_bag || '' %></td>
           <td><%= row.cie || '' %></td>
-          <td><%= row.etd ? row.etd : '' %></td>
-          <td><%= row.atd ? row.atd : '' %></td>
+          <td><%= row.etd ? new Date(row.etd).toLocaleString() : '' %></td>
+          <td><%= row.atd ? new Date(row.atd).toLocaleString() : '' %></td>
           <td><%= row.stat || '' %></td>
           <td><%= row.dem || '' %></td>
         </tr>
       <% }); %> 
     </tbody>
   </table>
+  </table>
 
   <script>
-    function updateTable(data) {
-      var tableBody = document.getElementById('table-body');
-      tableBody.innerHTML = '';
-
-      data.forEach(function (row) {
-        var newRow = document.createElement('tr');
-        newRow.innerHTML =
-          '<td>' + (row.aer ? row.aer : '') + '</td>' +
-          '<td>' + (row.sta ? row.sta : '') + '</td>' +
-          '<td>' + (row.pea ? row.pea : '') + '</td>' +
-          '<td>' + (row.eta ? row.eta : '') + '</td>' +
-          '<td>' + (row.ata ? row.ata : '') + '</td>' +
-          '<td>' + (row.v_arr ? row.v_arr : '') + '</td>' +
-          '<td>' + (row.res ? row.res : '') + '</td>' +
-          '<td>' + (row.ho_ini ? row.ho_ini : '') + '</td>' +
-          '<td>' + (row.ho_fin ? row.ho_fin : '') + '</td>' +
-          '<td>' + (row.res_a ? row.res_a : '') + '</td>' +
-          '<td>' + (row.pri_bag ? row.pri_bag : '') + '</td>' +
-          '<td>' + (row.ul_bag ? row.ul_bag : '') + '</td>' +
-          '<td>' + (row.cie ? row.cie : '') + '</td>' +
-          '<td>' + (row.etd ? row.etd : '') + '</td>' +
-          '<td>' + (row.atd ? row.atd : '') + '</td>' +
-          '<td>' + (row.stat ? row.stat : '') + '</td>' +
-          '<td>' + (row.dem ? row.dem : '') + '</td>';
-
-        tableBody.appendChild(newRow);
-      });
+    // Función para formatear las fechas en el formato deseado (YYYY/MM/DD HH:mm:ss)
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    if (isNaN(date)) {
+      return '';
     }
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+  }
 
+  function updateTable(data) {
+    var tableBody = document.getElementById('table-body');
+    tableBody.innerHTML = '';
+
+    data.forEach(function (row) {
+      var newRow = document.createElement('tr');
+      newRow.innerHTML =
+        '<td>' + (row.aer ? row.aer : '') + '</td>' +
+        '<td>' + (isValidDate(row.sta) ? formatDate(row.sta) : '') + '</td>' +
+        '<td>' + (row.pea ? row.pea : '') + '</td>' +
+        '<td>' + (isValidDate(row.eta) ? formatDate(row.eta) : '') + '</td>' +
+        '<td>' + (isValidDate(row.ata) ? formatDate(row.ata) : '') + '</td>' +
+        '<td>' + (row.v_arr ? row.v_arr : '') + '</td>' +
+        '<td>' + (row.res ? row.res : '') + '</td>' +
+        '<td>' + (row.ho_ini ? row.ho_ini : '') + '</td>' +
+        '<td>' + (row.ho_fin ? row.ho_fin : '') + '</td>' +
+        '<td>' + (row.res_a ? row.res_a : '') + '</td>' +
+        '<td>' + (row.pri_bag ? row.pri_bag : '') + '</td>' +
+        '<td>' + (row.ul_bag ? row.ul_bag : '') + '</td>' +
+        '<td>' + (row.cie ? row.cie : '') + '</td>' +
+        '<td>' + (isValidDate(row.etd) ? formatDate(row.etd) : '') + '</td>' +
+        '<td>' + (isValidDate(row.atd) ? formatDate(row.atd) : '') + '</td>' +
+        '<td>' + (row.stat ? row.stat : '') + '</td>' +
+        '<td>' + (row.dem ? row.dem : '') + '</td>';
+
+      tableBody.appendChild(newRow);
+    });
+  }
+    
+    function isValidDate(dateString) {
+      var date = new Date(dateString);
+      if (date.toString() === 'Invalid Date' || isNaN(date)) {
+        return false;
+      }
+    
+      // Verificar si el valor es igual a "31/12/1969, 19:00:00"
+      const invalidDate = new Date('1969-12-31T19:00:00').toLocaleString();
+      return date.toLocaleString() !== invalidDate;
+    }
+    
+  
     function getData() {
       var xhr = new XMLHttpRequest();
       xhr.open('GET', '/data', true);
@@ -130,9 +158,11 @@
       };
       xhr.send();
     }
-
+  
     getData();
     setInterval(getData, 60000);
   </script>
+  
 </body>
 </html>
+
