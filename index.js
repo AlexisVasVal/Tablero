@@ -58,7 +58,7 @@ async function fetchDataAndInsert() {
 }
 
 fetchDataAndInsert();
-setInterval(fetchDataAndInsert, 5000);
+setInterval(fetchDataAndInsert, 60000);
 
 // Resto del código...
 
