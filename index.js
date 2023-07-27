@@ -12,11 +12,11 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
 const pool = new Pool({
-  user: process.env.PGUSER,
-  host: process.env.PGHOST,
-  database: process.env.PGDATABASE,
-  password: process.env.PGPASSWORD,
-  port: process.env.PGPORT,
+  user: process.env.PGUSER || "postgres",
+  host: process.env.PGHOST || "localhost",
+  database: process.env.PGDATABASE || "tablero",
+  password: process.env.PGPASSWORD || "123456",
+  port: process.env.PGPORT || "5432",
 });
 
 async function getDataAndInsert(table, url, columns) {
