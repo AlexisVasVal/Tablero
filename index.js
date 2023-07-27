@@ -75,7 +75,7 @@ app.get('/', async (req, res) => {
     LEFT JOIN
     datosgenerales d ON i.vuelo = d.vuelo
     WHERE
-    sta >= NOW() - INTERVAL '1a0 hours'
+    sta >= NOW() - INTERVAL '10 hours'
     AND sta <= NOW() + INTERVAL '10 hours'
     ORDER BY sta ASC
     `;
