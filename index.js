@@ -50,7 +50,7 @@ async function getDataAndInsert(table, url, columns) {
 
 
 async function fetchDataAndInsert() {
-  await getDataAndInsert('itinera', 'https://script.google.com/macros/s/AKfycbzKpWfTXslaCefNC6nkODzCU2MYXg82CEomRZsdBFCdjFYo0kve48sjyVbNw9LWWZQbWA/exec', ['vuelo', 'aer', 'orig', 'v_arr', 'ato', 'v_dep', 'sta', 'stdd', 'dest', 'stat']);
+  await getDataAndInsert('itinera', 'https://script.google.com/macros/s/AKfycbxT9V2cE2W2fszon3ggyJxKDmVqQQFjuwhaIvMNcOGjipDAxJFqG6Yus4h0b4zoqhDG1A/exec', ['vuelo', 'aer', 'orig', 'v_arr', 'ato', 'v_dep', 'sta', 'stdd', 'dest', 'stat']);
   // -- await getDataAndInsert('itinera', 'https://script.google.com/macros/s/AKfycbyUu9UeC608S5ys8nZAKrpO1gt5HnkwcFxyT3swpyqQb0SkinT_rNBUq1_hbH7G-1SUww/exec', ['vuelo', 'aer', 'orig', 'v_arr', 'ato', 'v_dep', 'sta', 'stdd', 'dest', 'stat']);
   await getDataAndInsert('aduan', 'https://script.google.com/macros/s/AKfycbwxcvqPxBVLTNQOoDmgTb6EN0ZOZo-FoRpQcusNwDTHfRPZvYF1mJbDN7x-3zH8PvE/exec', ['vuelo', 'pri_bag', 'ul_bag', 'cie', 'obs', 'res_a']);
   await getDataAndInsert('evacab', 'https://script.google.com/macros/s/AKfycbxunPRdnJoTMsVPnZHcV0j6mStI_e1FA_2wnkej85dGy-OTUTo9FyDQV4Wp12D7ba5wcA/exec', ['vuelo', 'ho_ini', 'ho_fin', 'obs', 'res', 'cal_pun', 'cal_pre', 'cal_act', 'cal_mat', 'cal_res', 'tip_lim', 'obs_cli', 'coo', 'toi', 'gal', 'asp', 'cab_pax']);
@@ -75,7 +75,7 @@ app.get('/', async (req, res) => {
     LEFT JOIN
     datosgenerales d ON i.vuelo = d.vuelo
     WHERE
-    sta >= NOW() - INTERVAL '20 hours'
+    sta >= NOW() - INTERVAL '1a0 hours'
     AND sta <= NOW() + INTERVAL '10 hours'
     ORDER BY sta ASC
     `;
@@ -102,7 +102,7 @@ app.get('/data', async (req, res) => {
     LEFT JOIN
     datosgenerales d ON i.vuelo = d.vuelo
     WHERE
-    sta >= NOW() - INTERVAL '20 hours'
+    sta >= NOW() - INTERVAL '10 hours'
     AND sta <= NOW() + INTERVAL '10 hours'
     ORDER BY sta ASC
     `;
