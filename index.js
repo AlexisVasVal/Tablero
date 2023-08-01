@@ -19,21 +19,6 @@ const pool = new Pool({
   port: process.env.PGPORT || "5432",
 });
 
-// Diccionario para el reemplazo del campo stat
-function reemplazar(dato) {
-  const reemplazos = {
-    'TURNAROUND': 'T/A',
-    'LLEGADA': 'LLEG',
-    'SALIDA': 'SAL',
-    'CANCELADO':'CXL'
-    // Agrega más reemplazos según tus necesidades
-  };
-
-  return reemplazos[dato] || dato; // Si no se encuentra el valor en el diccionario, se mantiene el mismo valor
-}
-
-
-
 
 async function getDataAndInsert(table, url, columns) {
   try {
@@ -91,7 +76,7 @@ app.get('/', async (req, res) => {
     LEFT JOIN
     datosgenerales d ON i.vuelo = d.vuelo
     WHERE
-    sta >= NOW() - INTERVAL '15 hours'
+    sta >= NOW() - INTERVAL '20 hours'
     AND sta <= NOW() + INTERVAL '10 hours'
     ORDER BY sta ASC
     `;
@@ -118,7 +103,7 @@ app.get('/data', async (req, res) => {
     LEFT JOIN
     datosgenerales d ON i.vuelo = d.vuelo
     WHERE
-    sta >= NOW() - INTERVAL '15 hours'
+    sta >= NOW() - INTERVAL '20 hours'
     AND sta <= NOW() + INTERVAL '10 hours'
     ORDER BY sta ASC
     `;
