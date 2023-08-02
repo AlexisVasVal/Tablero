@@ -1,147 +1,145 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Tabla de datos</title>
-    <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f7f7f7;
+  <title>Tabla de datos con Bootstrap</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Estilos adicionales */
+    .hidden-column {
+      display: none;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: #fff;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-    }
-
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-
-    thead {
-      background-color: #f2f2f2;
+    .hidden-data .hidden-column {
+      display: table-cell;
     }
 
     th {
       font-weight: bold;
     }
 
-    tbody tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-
-    tbody tr:hover {
-      background-color: #e9e9e9;
+    /* Estilo para el botón pequeño */
+    .small-btn {
+      padding: 5px 10px;
+      font-size: 12px;
     }
   </style>
 </head>
 <body>
-  <table>
-    <thead>
-      <tr>
-        <th>AEROLINEA</th>
-        <th>STA</th>
-        <th>PEA</th>
-        <th>ETA</th>
-        <th>ATA</th>
-        <th>N° VUELO</th>
-        <th>RESPONSABLE CAB.</th>
-        <th>INI/FIN CABINA</th>
-        <th>RESPONSABLE ADU.</th>
-        <th>PRI/ULT MALETA</th>
-        <th>CIERRE ADU.</th>
-        <th>ETD</th>
-        <th>ATD</th>
-        <th>STATUS</th>
-        <th>COD. DEMORAS</th>
-      </tr>
-    </thead>
-    <tbody id="table-body">
-      <!-- El contenido de la tabla se actualizará aquí -->
-      <% data.forEach(function(row) { %>
-        <tr>
-          <td><%= row.aer || '' %></td>
-          <td><%= row.sta ? new Date(row.sta).toLocaleString() : '' %></td>
-          <td><%= row.pea || '' %></td>
-          <td><%= row.eta ? new Date(row.eta).toLocaleString() : '' %></td>
-          <td><%= row.ata ? new Date(row.ata).toLocaleString() : '' %></td>
-          <td><%= row.v_arr || '' %></td>
-          <td><%= row.res || '' %></td>
-          <td><%= row.ho_ini && row.ho_fin ? row.ho_ini + ' / ' + row.ho_fin : (row.ho_ini || row.ho_fin || '') %></td>
-          <td><%= row.res_a || '' %></td>
-          <td><%= row.pri_bag && row.ul_bag ? row.pri_bag + ' / ' +  row.ul_bag : (row.pri_bag || row.ul_bag || '') %></td>
-          <td><%= row.cie || '' %></td>
-          <td><%= row.etd ? new Date(row.etd).toLocaleString() : '' %></td>
-          <td><%= row.atd ? new Date(row.atd).toLocaleString() : '' %></td>
-          <td><%= row.stat || '' %></td><!-- Invocación de la función reemplazar -->
-          <td><%= row.dem || '' %></td>
-        </tr>
-      <% }); %> 
-    </tbody>
-
-  </table>
-  </table>
+  <div class="container mt-5">
+    <h2>Tabla de datos</h2>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Botón</th>
+            <th>AEROLINEA</th>
+            <th>STA</th>
+            <th>PEA</th>
+            <th>ETA</th>
+            <th>ATA</th>
+            <th>N° VUELO</th>
+            <th>INI/FIN CABINA</th>
+            <th>PRI/ULT MALETA</th>
+            <th>CIERRE ADU.</th>
+            <th>ETD</th>
+            <th>ATD</th>
+            <th>STATUS</th>
+            <th>COD. DEMORAS</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <!-- El contenido de la tabla se actualizará aquí -->
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   <script>
-  // Función para formatear las fechas en el formato deseado (YYYY/MM/DD HH:mm:ss)
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    if (isNaN(date)) {
-      return '';
+    // Función para formatear las fechas en el formato deseado (YYYY/MM/DD HH:mm:ss)
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      if (isNaN(date)) {
+        return '';
+      }
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+      return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
     }
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    return `${year}/${month}/${day} ${hours}:${minutes}`;
-  }
+
+    var hiddenStates = [];
 
   function updateTable(data) {
     var tableBody = document.getElementById('table-body');
     tableBody.innerHTML = '';
 
-    data.forEach(function (row) {
+    data.forEach(function (row, index) {
       var newRow = document.createElement('tr');
       newRow.innerHTML =
-        '<td>' + (row.aer ? row.aer : '') + '</td>' +
-        '<td>' + (isValidDate(row.sta) ? formatDate(row.sta) : '') + '</td>' +
-        '<td>' + (row.pea ? row.pea : '') + '</td>' +
-        '<td>' + (isValidDate(row.eta) ? formatDate(row.eta) : '') + '</td>' +
-        '<td>' + (isValidDate(row.ata) ? formatDate(row.ata) : '') + '</td>' +
-        '<td>' + (row.v_arr ? row.v_arr : '') + '</td>' +
-        '<td>' + (row.res ? row.res : '') + '</td>' +
-        '<td>' + (row.ho_ini && row.ho_fin ? row.ho_ini + ' / ' + row.ho_fin : '') + '</td>' + // Concatenar INI CAB. y FIN CAB.
-        '<td>' + (row.res_a ? row.res_a : '') + '</td>' +
-        '<td>' + (row.pri_bag && row.ul_bag ? row.pri_bag + ' / ' + row.ul_bag : '') + '</td>' + // Concatenar PRI MALETA y ULT MALETA.
-        '<td>' + (row.cie ? row.cie : '') + '</td>' +
-        '<td>' + (isValidDate(row.etd) ? formatDate(row.etd) : '') + '</td>' +
-        '<td>' + (isValidDate(row.atd) ? formatDate(row.atd) : '') + '</td>' +
-        '<td>' + (row.stat ? row.stat : '') + '</td>' + // Invocación de la función reemplazar
-        '<td>' + (row.dem ? row.dem : '') + '</td>';
+        `<td>
+          <button class="btn btn-primary rounded-circle small-btn" onclick="toggleData(${index})">
+              <i class="fa-solid fa-plane"></i>
+          </button>
+        </td>
+        <td>${row.aer || ''}</td>
+        <td>${row.sta ? formatDate(row.sta) : ''}</td>
+        <td>${row.pea || ''}</td>
+        <td>${row.eta ? formatDate(row.eta) : ''}</td>
+        <td>${row.ata ? formatDate(row.ata) : ''}</td>
+        <td>${row.v_arr || ''}</td>
+        <td>${row.ho_ini && row.ho_fin ? row.ho_ini + ' / ' + row.ho_fin : (row.ho_ini || row.ho_fin || '')}</td>
+        <td>${row.pri_bag && row.ul_bag ? row.pri_bag + ' / ' + row.ul_bag : (row.pri_bag || row.ul_bag || '')}</td>
+        <td>${row.cie || ''}</td>
+        <td>${row.etd ? formatDate(row.etd) : ''}</td>
+        <td>${row.atd ? formatDate(row.atd) : ''}</td>
+        <td>${row.stat || ''}</td>
+        <td>${row.dem || ''}</td>`;
 
       tableBody.appendChild(newRow);
+
+      // Filas ocultas para los responsables
+      var hiddenDataRow = document.createElement('tr');
+      hiddenDataRow.className = 'hidden-data';
+      hiddenDataRow.style.display = 'none';
+      hiddenDataRow.innerHTML =
+        `<td></td>
+        <td><strong>RESPONSABLE CAB.</strong></td>
+        <td colspan="4">${row.res || ''}</td>
+        <td><strong>EQUIPO CAB.</strong></td>`;
+      tableBody.appendChild(hiddenDataRow);
+
+      hiddenDataRow = document.createElement('tr');
+      hiddenDataRow.className = 'hidden-data';
+      hiddenDataRow.style.display = 'none';
+      hiddenDataRow.innerHTML =
+        `<td></td>
+        <td><strong>RESPONSABLE ADU.</strong></td>
+        <td colspan="4">${row.res_a || ''}</td>
+        <td><strong>EQUIPO ADU.</strong></td>`
+        ;
+      tableBody.appendChild(hiddenDataRow);
+
+      // Inicializar los estados de las filas ocultas como falsos (no mostrados)
+      hiddenStates.push(false, false);
     });
   }
-    
-    function isValidDate(dateString) {
-      var date = new Date(dateString);
-      if (date.toString() === 'Invalid Date' || isNaN(date)) {
-        return false;
-      }
-    
-      // Verificar si el valor es igual a "31/12/1969, 19:00:00"
-      const invalidDate = new Date('1969-12-31T19:00:00').toLocaleString();
-      return date.toLocaleString() !== invalidDate;
+
+  // Función para mostrar u ocultar las filas ocultas relacionadas con un botón
+  function toggleData(index) {
+    var start = index * 2;
+    var end = start + 1;
+
+    for (var i = 0; i < hiddenStates.length; i++) {
+      hiddenStates[i] = i >= start && i <= end ? !hiddenStates[i] : false;
+      document.querySelectorAll('.hidden-data')[i].style.display = hiddenStates[i] ? 'table-row' : 'none';
     }
-    
+  }
   
+
     function getData() {
       var xhr = new XMLHttpRequest();
       xhr.open('GET', '/data', true);
@@ -153,10 +151,9 @@
       };
       xhr.send();
     }
-  
+
     getData();
     setInterval(getData, 60000);
   </script>
-  
 </body>
 </html>
