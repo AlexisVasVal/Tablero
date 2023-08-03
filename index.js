@@ -48,12 +48,9 @@ async function getDataAndInsert(table, url, columns) {
   }
 }
 
-
-
 async function fetchDataAndInsert() {
-  await getDataAndInsert('itinera', 'https://script.google.com/macros/s/AKfycbwE3e9BTJWQWGBf-vOH2U1qL5a0OmE0D8tflpIPc2uanWGyNd2UyT04EQirUuf4xg7HTw/exec', ['vuelo', 'aer', 'orig', 'v_arr', 'ato', 'v_dep', 'sta', 'stdd', 'dest', 'stat']);
-  // -- await getDataAndInsert('itinera', 'https://script.google.com/macros/s/AKfycbyUu9UeC608S5ys8nZAKrpO1gt5HnkwcFxyT3swpyqQb0SkinT_rNBUq1_hbH7G-1SUww/exec', ['vuelo', 'aer', 'orig', 'v_arr', 'ato', 'v_dep', 'sta', 'stdd', 'dest', 'stat']);
-  await getDataAndInsert('aduan', 'https://script.google.com/macros/s/AKfycbwxcvqPxBVLTNQOoDmgTb6EN0ZOZo-FoRpQcusNwDTHfRPZvYF1mJbDN7x-3zH8PvE/exec', ['vuelo', 'pri_bag', 'ul_bag', 'cie', 'obs', 'res_a']);
+  await getDataAndInsert('itinera', 'https://script.google.com/macros/s/AKfycbxn2xZ4JWspGvA3kh9FRLKja1SiYld1e34N0-mLY1BBPH_6lVi5tROZYJJSiuy23PLFsg/exec', ['vuelo', 'aer', 'orig', 'v_arr', 'ato', 'v_dep', 'sta', 'stdd', 'dest', 'stat', 'cod_ae']);
+  await getDataAndInsert('aduan', 'https://script.google.com/macros/s/AKfycby4SzTtblB_yh1UeVnQbDF71o38plsN0x0UZVbWYAE_TzCsEYxkeNCLzvxMxm_lMYIy/exec', ['vuelo', 'pri_bag', 'ul_bag', 'cie', 'obs', 'res_a']);
   await getDataAndInsert('evacab', 'https://script.google.com/macros/s/AKfycbxunPRdnJoTMsVPnZHcV0j6mStI_e1FA_2wnkej85dGy-OTUTo9FyDQV4Wp12D7ba5wcA/exec', ['vuelo', 'ho_ini', 'ho_fin', 'obs', 'res', 'cal_pun', 'cal_pre', 'cal_act', 'cal_mat', 'cal_res', 'tip_lim', 'obs_cli', 'coo', 'toi', 'gal', 'asp', 'cab_pax']);
   await getDataAndInsert('datosgenerales', 'https://script.google.com/macros/s/AKfycbys-iGCyHgyHyaerfJdhjmKiG5P0AQHX50llmW2g_XeVNWZyWu2p6GTL97mxbuMmArb/exec', ['vuelo', 'mat', 'eta', 'etd', 'ata', 'atd', 'pea','pax_in', 'pax_out', 'kg_in', 'kg_out', 'com', 'uni', 'dem', 'dem_min', 'hor_tie', 'min_dem', 'rps', 'obs_dem', 'obs_gen', 'enc_vue', 'stat']);
 }
@@ -66,8 +63,9 @@ setInterval(fetchDataAndInsert, 60000);
 app.get('/', async (req, res) => {
   try {
     const query = `
-    SELECT i.aer, i.sta, d.pea, d.eta, d.ata, i.v_arr, e.res ,e.ho_ini, e.ho_fin,
-    a.res_a ,a.pri_bag, a.ul_bag, a.cie, d.etd, d.atd, d.stat, d.dem
+    SELECT i.cod_ae, i.sta, i.stdd, d.pea, d.eta, d.ata, i.v_arr, i.v_dep, e.res,
+    e.ho_ini, e.ho_fin,a.res_a ,a.pri_bag, a.ul_bag, a.cie, d.etd, d.atd, d.stat,
+    d.dem, i.orig, i.dest
     FROM itinera i
     LEFT JOIN
     aduan a ON a.vuelo = i.vuelo
@@ -93,8 +91,9 @@ app.get('/', async (req, res) => {
 app.get('/data', async (req, res) => {
   try {
     const query = `
-    SELECT i.aer, i.sta, d.pea, d.eta, d.ata, i.v_arr, e.res ,e.ho_ini, e.ho_fin,
-    a.res_a ,a.pri_bag, a.ul_bag, a.cie, d.etd, d.atd, d.stat, d.dem
+    SELECT i.cod_ae, i.sta, i.stdd, d.pea, d.eta, d.ata, i.v_arr, i.v_dep, e.res,
+    e.ho_ini, e.ho_fin,a.res_a ,a.pri_bag, a.ul_bag, a.cie, d.etd, d.atd, d.stat,
+    d.dem, i.orig, i.dest
     FROM itinera i
     LEFT JOIN
     aduan a ON a.vuelo = i.vuelo

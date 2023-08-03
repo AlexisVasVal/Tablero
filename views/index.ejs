@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Tabla de datos con Bootstrap</title>
+  <title>Tabla de datos de Control</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
+    table, td {
+      font-size: 13.5px;
+    }
+
     /* Estilos adicionales */
     .hidden-column {
       display: none;
@@ -33,17 +37,13 @@
         <thead>
           <tr>
             <th>Botón</th>
-            <th>AEROLINEA</th>
-            <th>STA</th>
-            <th>PEA</th>
-            <th>ETA</th>
-            <th>ATA</th>
-            <th>N° VUELO</th>
+            <th># VUELO</th>
+            <th>ORI/DES</th>
+            <th>STA/STD</th>
+            <th>ETA/ETD</th>
+            <th>ATA/ATD</th>
             <th>INI/FIN CABINA</th>
             <th>PRI/ULT MALETA</th>
-            <th>CIERRE ADU.</th>
-            <th>ETD</th>
-            <th>ATD</th>
             <th>STATUS</th>
             <th>COD. DEMORAS</th>
           </tr>
@@ -58,17 +58,19 @@
   <script>
     // Función para formatear las fechas en el formato deseado (YYYY/MM/DD HH:mm:ss)
     function formatDate(dateString) {
+      const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
       const date = new Date(dateString);
       if (isNaN(date)) {
         return '';
       }
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const month = months[date.getMonth()]
+      //const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
       const hours = String(date.getHours()).padStart(2, '0');
       const minutes = String(date.getMinutes()).padStart(2, '0');
       const seconds = String(date.getSeconds()).padStart(2, '0');
-      return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+      return `${day} ${month} ${hours}:${minutes}`;
     }
 
     var hiddenStates = [];
@@ -80,24 +82,20 @@
     data.forEach(function (row, index) {
       var newRow = document.createElement('tr');
       newRow.innerHTML =
-        `<td>
-          <button class="btn btn-primary rounded-circle small-btn" onclick="toggleData(${index})">
-              <i class="fa-solid fa-plane"></i>
-          </button>
-        </td>
-        <td>${row.aer || ''}</td>
-        <td>${row.sta ? formatDate(row.sta) : ''}</td>
-        <td>${row.pea || ''}</td>
-        <td>${row.eta ? formatDate(row.eta) : ''}</td>
-        <td>${row.ata ? formatDate(row.ata) : ''}</td>
-        <td>${row.v_arr || ''}</td>
-        <td>${row.ho_ini && row.ho_fin ? row.ho_ini + ' / ' + row.ho_fin : (row.ho_ini || row.ho_fin || '')}</td>
-        <td>${row.pri_bag && row.ul_bag ? row.pri_bag + ' / ' + row.ul_bag : (row.pri_bag || row.ul_bag || '')}</td>
-        <td>${row.cie || ''}</td>
-        <td>${row.etd ? formatDate(row.etd) : ''}</td>
-        <td>${row.atd ? formatDate(row.atd) : ''}</td>
-        <td>${row.stat || ''}</td>
-        <td>${row.dem || ''}</td>`;
+      `<td>
+        <button class="btn btn-primary rounded-circle small-btn" onclick="toggleData(${index})">
+            <i class="fa-solid fa-plane"></i>
+        </button>
+      </td>
+      <td>${(row.cod_ae && row.v_arr && row.v_dep) ? `${row.cod_ae} ${row.v_arr} | ${row.pea || ''}<br>${row.cod_ae} ${row.v_dep}` : (row.cod_ae || '')}</td>
+      <td>${(row.orig && row.dest) ? `${row.orig}<br>${row.dest}` : row.orig || ''}</td>
+      <td>${row.sta ? `${formatDate(row.sta)}<br>${formatDate(row.stdd)}` : ''}</td>
+      <td>${row.eta ? `${formatDate(row.eta)}${row.etd ? '<br>' + formatDate(row.etd) : ''}` : ''}</td>
+      <td>${row.ata ? `${formatDate(row.ata)}${row.atd ? '<br>' + formatDate(row.atd) : ''}` : ''}</td>
+      <td>${row.ho_ini && row.ho_fin ? row.ho_ini + ' / ' + row.ho_fin : (row.ho_ini || row.ho_fin || '')}</td>
+      <td>${row.pri_bag && row.ul_bag ? row.pri_bag + ' / ' + row.ul_bag : (row.pri_bag || row.ul_bag || '')}</td>
+      <td>${row.stat || ''}</td>
+      <td>${row.dem || ''}</td>`;
 
       tableBody.appendChild(newRow);
 
@@ -108,7 +106,7 @@
       hiddenDataRow.innerHTML =
         `<td></td>
         <td><strong>RESPONSABLE CAB.</strong></td>
-        <td colspan="4">${row.res || ''}</td>
+        <td colspan="3">${row.res || ''}</td>
         <td><strong>EQUIPO CAB.</strong></td>`;
       tableBody.appendChild(hiddenDataRow);
 
@@ -118,8 +116,9 @@
       hiddenDataRow.innerHTML =
         `<td></td>
         <td><strong>RESPONSABLE ADU.</strong></td>
-        <td colspan="4">${row.res_a || ''}</td>
-        <td><strong>EQUIPO ADU.</strong></td>`
+        <td colspan="3">${row.res_a || ''}</td>
+        <td><strong>CIERRE ADU. </strong></td>
+        <td colspan="4">${row.cie || ''}</td>`
         ;
       tableBody.appendChild(hiddenDataRow);
 
