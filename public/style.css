@@ -1,0 +1,65 @@
+  /* Estilo para la celda que contiene el botón */
+  .cell-with-button {
+    position: relative;
+  }
+
+  /* Estilo para el botón en la celda */
+  .cell-with-button button {
+    position: absolute;
+    right: 5px; /* Ajusta este valor según desees el espacio desde el borde derecho */
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  table, td {
+    font-size: 13.5px;
+  }
+
+  /* Estilos adicionales */
+  .hidden-column {
+    display: none;
+  }
+
+  .hidden-data .hidden-column {
+    display: table-cell;
+  }
+
+  th {
+    font-weight: bold;
+  }
+
+  /* Estilo para el botón pequeño */
+  .small-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+/* Estilos para el modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  width: 40%;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para el botón de cerrar */
+.modal-content button {
+  margin-top: 10px;
+}
+
+.modal-content p {
+  margin-bottom: 10px;
+}

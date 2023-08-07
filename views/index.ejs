@@ -5,6 +5,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
+    /* Estilo para resaltar las celdas */
+    td.highlighted-cell {
+      background-color: red; /* Color rojo claro (puedes cambiarlo según tu preferencia) */
+    }
+
     table, td {
       font-size: 13.5px;
     }
@@ -26,6 +31,12 @@
     .small-btn {
       padding: 5px 10px;
       font-size: 12px;
+    }
+
+    /* Estilo para centrar el contenido en las celdas */
+    td:not(.flight-info-td) {
+      text-align: center;
+      vertical-align: middle;
     }
   </style>
 </head>
@@ -55,6 +66,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
     // Función para formatear las fechas en el formato deseado (YYYY/MM/DD HH:mm:ss)
     function formatDate(dateString) {
@@ -73,82 +85,99 @@
       return `${day} ${month} ${hours}:${minutes}`;
     }
 
+    // Función para formatear las horas en el formato deseado (HH:mm:ss)
+    function formatTime(timeString) {
+      const [hours, minutes, seconds] = timeString.split(':');
+      return `${hours}:${minutes}:${seconds}`;
+    }
+
+    // Función para calcular la diferencia en minutos entre dos horas
+    function getMinutesDifference(time1, time2) {
+      const time1Obj = new Date(`2000-01-01T${formatTime(time1)}`);
+      const time2Obj = new Date(`2000-01-01T${formatTime(time2)}`);
+      const diffInMs = Math.abs(time2Obj - time1Obj);
+      const diffInMinutes = Math.floor(diffInMs / 60000); // 60000 milisegundos equivalen a 1 minuto
+      return diffInMinutes >= 3 ? diffInMinutes : null;
+    }
+
     var hiddenStates = [];
 
-  function updateTable(data) {
-    var tableBody = document.getElementById('table-body');
-    tableBody.innerHTML = '';
+    function updateTable(data) {
+      var tableBody = document.getElementById('table-body');
+      tableBody.innerHTML = '';
 
-    data.forEach(function (row, index) {
-      var newRow = document.createElement('tr');
-      newRow.innerHTML =
-      `<td>
-        <button class="btn btn-primary rounded-circle small-btn" onclick="toggleData(${index})">
-            <i class="fa-solid fa-plane"></i>
-        </button>
-      </td>
-      <td>${(row.cod_ae && row.v_arr && row.v_dep) ? `${row.cod_ae} ${row.v_arr} | ${row.pea || ''}<br>${row.cod_ae} ${row.v_dep}` : (row.cod_ae || '')}</td>
-      <td>${(row.orig && row.dest) ? `${row.orig}<br>${row.dest}` : row.orig || ''}</td>
-      <td>${row.sta ? `${formatDate(row.sta)}<br>${formatDate(row.stdd)}` : ''}</td>
-      <td>${row.eta ? `${formatDate(row.eta)}${row.etd ? '<br>' + formatDate(row.etd) : ''}` : ''}</td>
-      <td>${row.ata ? `${formatDate(row.ata)}${row.atd ? '<br>' + formatDate(row.atd) : ''}` : ''}</td>
-      <td>${row.ho_ini && row.ho_fin ? row.ho_ini + ' / ' + row.ho_fin : (row.ho_ini || row.ho_fin || '')}</td>
-      <td>${row.pri_bag && row.ul_bag ? row.pri_bag + ' / ' + row.ul_bag : (row.pri_bag || row.ul_bag || '')}</td>
-      <td>${row.stat || ''}</td>
-      <td>${row.dem || ''}</td>`;
+      data.forEach(function (row, index) {
+        var newRow = document.createElement('tr');
+        newRow.innerHTML =
+        `<td>
+          <button class="btn btn-primary rounded-circle small-btn" onclick="toggleData(${index})">
+              <i class="fa-solid fa-plane"></i>
+          </button>
+        </td>
+        <td class="flight-info-td">${(row.cod_ae && row.v_arr && row.v_dep) ? `${row.cod_ae} ${row.v_arr} | ${row.pea || ''}<br>${row.cod_ae} ${row.v_dep}` : (row.cod_ae || '')}</td>
+        <td>${(row.orig && row.dest) ? `${row.orig}<br>${row.dest}` : row.orig || ''}</td>
+        <td>${row.sta ? `${formatDate(row.sta)}<br>${formatDate(row.stdd)}` : ''}</td>
+        <td>${row.eta ? `${formatDate(row.eta)}${row.etd ? '<br>' + formatDate(row.etd) : ''}` : ''}</td>
+        <td>${row.ata ? `${formatDate(row.ata)}${row.atd ? '<br>' + formatDate(row.atd) : ''}` : ''}</td>
+    
+        <td class="${row.ho_fin && row.ho_ini && getMinutesDifference(row.ho_fin, row.ho_ini) > 3 ? 'highlighted-cell' : ''}">
+          ${row.ho_ini ? `${row.ho_ini}${row.ho_fin ? '<br>' + row.ho_fin : ''}` : ''}
+        </td> 
+        
+        <td class="${row.ul_bag && row.pri_bag && getMinutesDifference(row.ul_bag, row.pri_bag) > 3 ? 'highlighted-cell' : ''}">
+          ${row.pri_bag ? `${row.pri_bag}${row.ul_bag ? '<br>' + row.ul_bag : ''}` : ''}
+        </td>
+                
+        <td>${row.stat || ''}</td>
+        <td>${row.dem || ''}</td>`;
 
-      tableBody.appendChild(newRow);
+        tableBody.appendChild(newRow);
 
-      // Filas ocultas para los responsables
-      var hiddenDataRow = document.createElement('tr');
-      hiddenDataRow.className = 'hidden-data';
-      hiddenDataRow.style.display = 'none';
-      hiddenDataRow.innerHTML =
-        `<td></td>
-        <td><strong>RESPONSABLE CAB.</strong></td>
-        <td colspan="3">${row.res || ''}</td>
-        <td><strong>EQUIPO CAB.</strong></td>`;
-      tableBody.appendChild(hiddenDataRow);
+        // Filas ocultas para los responsables
+        var hiddenDataRow = document.createElement('tr');
+        hiddenDataRow.className = 'hidden-data';
+        hiddenDataRow.style.display = 'none';
+        hiddenDataRow.innerHTML =
+          `<td><strong>RESPONSABLE CAB.</strong></td>
+          <td colspan="3">${row.res || ''}</td>
+          <td><strong>EQUIPO CAB.</strong></td>`;
+        tableBody.appendChild(hiddenDataRow);
 
-      hiddenDataRow = document.createElement('tr');
-      hiddenDataRow.className = 'hidden-data';
-      hiddenDataRow.style.display = 'none';
-      hiddenDataRow.innerHTML =
-        `<td></td>
-        <td><strong>RESPONSABLE ADU.</strong></td>
-        <td colspan="3">${row.res_a || ''}</td>
-        <td><strong>CIERRE ADU. </strong></td>
-        <td colspan="4">${row.cie || ''}</td>`
-        ;
-      tableBody.appendChild(hiddenDataRow);
+        hiddenDataRow = document.createElement('tr');
+        hiddenDataRow.className = 'hidden-data';
+        hiddenDataRow.style.display = 'none';
+        hiddenDataRow.innerHTML =
+          `<td><strong>RESPONSABLE ADU.</strong></td>
+          <td colspan="3">${row.res_a || ''}</td>
+          <td><strong>CIERRE ADU. </strong></td>
+          <td colspan="5">${row.cie || ''}</td>`;
+        tableBody.appendChild(hiddenDataRow);
 
-      // Inicializar los estados de las filas ocultas como falsos (no mostrados)
-      hiddenStates.push(false, false);
-    });
-  }
-
-  // Función para mostrar u ocultar las filas ocultas relacionadas con un botón
-  function toggleData(index) {
-    var start = index * 2;
-    var end = start + 1;
-
-    for (var i = 0; i < hiddenStates.length; i++) {
-      hiddenStates[i] = i >= start && i <= end ? !hiddenStates[i] : false;
-      document.querySelectorAll('.hidden-data')[i].style.display = hiddenStates[i] ? 'table-row' : 'none';
+        // Inicializar los estados de las filas ocultas como falsos (no mostrados)
+        hiddenStates.push(false, false);
+      });
     }
-  }
-  
+
+    // Función para mostrar u ocultar las filas ocultas relacionadas con un botón
+    function toggleData(index) {
+      var start = index * 2;
+      var end = start + 1;
+
+      for (var i = 0; i < hiddenStates.length; i++) {
+        hiddenStates[i] = i >= start && i <= end ? !hiddenStates[i] : false;
+        document.querySelectorAll('.hidden-data')[i].style.display = hiddenStates[i] ? 'table-row' : 'none';
+      }
+    }
 
     function getData() {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', '/data', true);
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          var responseData = JSON.parse(xhr.responseText);
-          updateTable(responseData.data);
-        }
-      };
-      xhr.send();
+      axios.get('/data') // Hace una solicitud GET a la URL '/data'
+        .then(function (response) {
+          // La respuesta del servidor se encuentra en response.data
+          updateTable(response.data.data);
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
     }
 
     getData();
