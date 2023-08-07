@@ -4,51 +4,19 @@
   <title>Tabla de datos de Control</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    /* Estilo para resaltar las celdas */
-    td.highlighted-cell {
-      background-color: red; /* Color rojo claro (puedes cambiarlo según tu preferencia) */
-    }
-
-    table, td {
-      font-size: 13.5px;
-    }
-
-    /* Estilos adicionales */
-    .hidden-column {
-      display: none;
-    }
-
-    .hidden-data .hidden-column {
-      display: table-cell;
-    }
-
-    th {
-      font-weight: bold;
-    }
-
-    /* Estilo para el botón pequeño */
-    .small-btn {
-      padding: 5px 10px;
-      font-size: 12px;
-    }
-
-    /* Estilo para centrar el contenido en las celdas */
-    td:not(.flight-info-td) {
-      text-align: center;
-      vertical-align: middle;
-    }
-  </style>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/scripts.js"></script>
 </head>
 <body>
   <div class="container mt-5">
-    <h2>Tabla de datos</h2>
+    <h2></h2>
     <div class="table-responsive">
       <table class="table table-bordered table-striped">
         <thead>
           <tr>
             <th>Botón</th>
-            <th># VUELO</th>
+            <th>#VUELO</th>
+            <th>PEA</th>
             <th>ORI/DES</th>
             <th>STA/STD</th>
             <th>ETA/ETD</th>
@@ -66,122 +34,14 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script>
-    // Función para formatear las fechas en el formato deseado (YYYY/MM/DD HH:mm:ss)
-    function formatDate(dateString) {
-      const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-      const date = new Date(dateString);
-      if (isNaN(date)) {
-        return '';
-      }
-      const year = date.getFullYear();
-      const month = months[date.getMonth()]
-      //const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
-      return `${day} ${month} ${hours}:${minutes}`;
-    }
+  <!-- Modal -->
+  <div class="modal" id="miModal">
+    <div class="modal-content" id="modalContent">
+      <!-- Contenido del modal se generará dinámicamente aquí -->
+      <button class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
+    </div>
+  </div>
 
-    // Función para formatear las horas en el formato deseado (HH:mm:ss)
-    function formatTime(timeString) {
-      const [hours, minutes, seconds] = timeString.split(':');
-      return `${hours}:${minutes}:${seconds}`;
-    }
-
-    // Función para calcular la diferencia en minutos entre dos horas
-    function getMinutesDifference(time1, time2) {
-      const time1Obj = new Date(`2000-01-01T${formatTime(time1)}`);
-      const time2Obj = new Date(`2000-01-01T${formatTime(time2)}`);
-      const diffInMs = Math.abs(time2Obj - time1Obj);
-      const diffInMinutes = Math.floor(diffInMs / 60000); // 60000 milisegundos equivalen a 1 minuto
-      return diffInMinutes >= 3 ? diffInMinutes : null;
-    }
-
-    var hiddenStates = [];
-
-    function updateTable(data) {
-      var tableBody = document.getElementById('table-body');
-      tableBody.innerHTML = '';
-
-      data.forEach(function (row, index) {
-        var newRow = document.createElement('tr');
-        newRow.innerHTML =
-        `<td>
-          <button class="btn btn-primary rounded-circle small-btn" onclick="toggleData(${index})">
-              <i class="fa-solid fa-plane"></i>
-          </button>
-        </td>
-        <td class="flight-info-td">${(row.cod_ae && row.v_arr && row.v_dep) ? `${row.cod_ae} ${row.v_arr} | ${row.pea || ''}<br>${row.cod_ae} ${row.v_dep}` : (row.cod_ae || '')}</td>
-        <td>${(row.orig && row.dest) ? `${row.orig}<br>${row.dest}` : row.orig || ''}</td>
-        <td>${row.sta ? `${formatDate(row.sta)}<br>${formatDate(row.stdd)}` : ''}</td>
-        <td>${row.eta ? `${formatDate(row.eta)}${row.etd ? '<br>' + formatDate(row.etd) : ''}` : ''}</td>
-        <td>${row.ata ? `${formatDate(row.ata)}${row.atd ? '<br>' + formatDate(row.atd) : ''}` : ''}</td>
-    
-        <td class="${row.ho_fin && row.ho_ini && getMinutesDifference(row.ho_fin, row.ho_ini) > 3 ? 'highlighted-cell' : ''}">
-          ${row.ho_ini ? `${row.ho_ini}${row.ho_fin ? '<br>' + row.ho_fin : ''}` : ''}
-        </td> 
-        
-        <td class="${row.ul_bag && row.pri_bag && getMinutesDifference(row.ul_bag, row.pri_bag) > 3 ? 'highlighted-cell' : ''}">
-          ${row.pri_bag ? `${row.pri_bag}${row.ul_bag ? '<br>' + row.ul_bag : ''}` : ''}
-        </td>
-                
-        <td>${row.stat || ''}</td>
-        <td>${row.dem || ''}</td>`;
-
-        tableBody.appendChild(newRow);
-
-        // Filas ocultas para los responsables
-        var hiddenDataRow = document.createElement('tr');
-        hiddenDataRow.className = 'hidden-data';
-        hiddenDataRow.style.display = 'none';
-        hiddenDataRow.innerHTML =
-          `<td><strong>RESPONSABLE CAB.</strong></td>
-          <td colspan="3">${row.res || ''}</td>
-          <td><strong>EQUIPO CAB.</strong></td>`;
-        tableBody.appendChild(hiddenDataRow);
-
-        hiddenDataRow = document.createElement('tr');
-        hiddenDataRow.className = 'hidden-data';
-        hiddenDataRow.style.display = 'none';
-        hiddenDataRow.innerHTML =
-          `<td><strong>RESPONSABLE ADU.</strong></td>
-          <td colspan="3">${row.res_a || ''}</td>
-          <td><strong>CIERRE ADU. </strong></td>
-          <td colspan="5">${row.cie || ''}</td>`;
-        tableBody.appendChild(hiddenDataRow);
-
-        // Inicializar los estados de las filas ocultas como falsos (no mostrados)
-        hiddenStates.push(false, false);
-      });
-    }
-
-    // Función para mostrar u ocultar las filas ocultas relacionadas con un botón
-    function toggleData(index) {
-      var start = index * 2;
-      var end = start + 1;
-
-      for (var i = 0; i < hiddenStates.length; i++) {
-        hiddenStates[i] = i >= start && i <= end ? !hiddenStates[i] : false;
-        document.querySelectorAll('.hidden-data')[i].style.display = hiddenStates[i] ? 'table-row' : 'none';
-      }
-    }
-
-    function getData() {
-      axios.get('/data') // Hace una solicitud GET a la URL '/data'
-        .then(function (response) {
-          // La respuesta del servidor se encuentra en response.data
-          updateTable(response.data.data);
-        })
-        .catch(function (error) {
-          console.error(error);
-        });
-    }
-
-    getData();
-    setInterval(getData, 60000);
-  </script>
+  <script></script>
 </body>
 </html>
