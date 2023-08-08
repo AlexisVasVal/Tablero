@@ -3,12 +3,22 @@
     position: relative;
   }
 
-  /* Estilo para el botón en la celda */
   .cell-with-button button {
     position: absolute;
     right: 5px; /* Ajusta este valor según desees el espacio desde el borde derecho */
     top: 50%;
     transform: translateY(-50%);
+    padding: 5px 10px; /* Ajusta el padding según desees */
+    font-size: 12px;
+    border-radius: 50%;
+    border: none; /* Remueve el borde del botón */
+    cursor: pointer;
+  }
+  
+  /* Estilo para el botón verde */
+  .cell-with-button .green-btn {
+    background-color: green;
+    color: white; /* Color del texto en el botón */
   }
 
   table, td {
@@ -33,6 +43,7 @@
     padding: 5px 10px;
     font-size: 12px;
   }
+
 
 /* Estilos para el modal */
 .modal {
@@ -63,3 +74,4 @@
 .modal-content p {
   margin-bottom: 10px;
 }
+

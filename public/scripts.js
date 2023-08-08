@@ -1,6 +1,16 @@
-var currentRow = {}; // Variable global para almacenar la fila actual seleccionada
+var aerolineaTiempos = {
+  '342': [0, 2, 3], // Y4
+  '6653': [0, 2, 3], // iberia
+  '340': [0, 2, 3], // Y4
+  '3544': [0, 4, 3], // conviasa
+  '4110': [0, 2, 3], // Q6
+  '6659': [0, 2, 3], // Iberia
+  '748': [0, 2, 3], // boa
+  '1825': [0, 2, 3], // jetblue
+};
 
-// Función para formatear las fechas en el formato deseado (YYYY/MM/DD HH:mm:ss)
+var currentRow = {};
+
 function formatDate(dateString) {
   const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
   const date = new Date(dateString);
@@ -16,6 +26,17 @@ function formatDate(dateString) {
   return `${day} ${month} ${hours}:${minutes}`;
 }
 
+function formatTime(dateString) {
+  const date = new Date(dateString);
+  if (isNaN(date)) {
+    return '';
+  }
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
 var hiddenStates = [];
 
 function updateTable(data) {
@@ -23,6 +44,7 @@ function updateTable(data) {
   tableBody.innerHTML = '';
 
   data.forEach(function (row, index) {
+    var vArr = row.v_arr;
     var newRow = document.createElement('tr');
     newRow.innerHTML = `
       <td>
@@ -30,29 +52,52 @@ function updateTable(data) {
             <i class="fa-solid fa-plane"></i>
         </button>
       </td>
-      <td>${(row.cod_ae && row.v_arr && row.v_dep) ? `${row.cod_ae} ${row.v_arr}<br>${row.cod_ae} ${row.v_dep}` : (row.cod_ae || '')}</td>
+      <td>${(row.cod_ae && row.v_arr && row.v_dep) ? `${row.cod_ae} ${row.v_arr}<br>${row.cod_ae} ${row.v_dep}` : (row.cod_ae || '-')}</td>
       <td class="text-center align-middle">${row.pea || ''}</td>
       <td class="text-center align-middle">${(row.orig && row.dest) ? `${row.orig}<br>${row.dest}` : row.orig || ''}</td>
-      <td class="text-center align-middle">${row.sta ? `${formatDate(row.sta)}<br>${formatDate(row.stdd)}` : ''}</td>
-      <td class="text-center align-middle">${row.eta ? `${formatDate(row.eta)}${row.etd ? '<br>' + formatDate(row.etd) : ''}` : ''}</td>
-      <td class="text-center align-middle">${row.ata ? `${formatDate(row.ata)}${row.atd ? '<br>' + formatDate(row.atd) : ''}` : ''}</td>
-
-      <td class="cell-with-button">
-        ${row.ho_ini && row.ho_fin ? row.ho_ini + ' / ' + row.ho_fin : (row.ho_ini || row.ho_fin || '')}
-        <button class="btn btn-info rounded-circle small-btn" onclick="mostrarModalPersonalizado(${index})">T</button>
-      </td>
-
-      <td class="cell-with-button">
-        ${row.pri_bag && row.ul_bag ? row.pri_bag + ' / ' + row.ul_bag : (row.pri_bag || row.ul_bag || '')}
-        <button class="btn btn-info rounded-circle small-btn" onclick="mostrarModalPersonalizado2(${index})">T</button>
-      </td>
-
       <td class="text-center align-middle">${row.stat || ''}</td>
-      <td class="text-center align-middle">${row.dem || ''}</td>`;
+      <td class="text-center align-middle">${row.sta ? `${formatDate(row.sta)}<br>${formatDate(row.stdd)}` : ''}</td>
+      <td class="text-center align-middle">${row.eta ? `${formatDate(row.eta)}${row.etd ? '<br>' + formatDate(row.etd) : '-'}` : '-'}</td>
+      <td class="text-center align-middle">${row.ata ? `${formatDate(row.ata)}${row.atd ? '<br>' + formatDate(row.atd) : '-'}` : '-'}</td>
 
+      <td class="cell-with-button">
+        <!-- Verificamos si v_arr es diferente de 1364 y ho_ini no está vacío -->
+        ${row.ho_ini ? (
+          // Si ambas condiciones se cumplen, mostramos el contenido con el botón
+          `${row.ho_ini} / ${row.ho_fin}` +
+          `<button class="btn green-btn rounded-circle small-btn" id="button-${index}" onclick="mostrarModalPersonalizado(${index})">T</button>`
+        ) : (
+          // Si es false no llenará nada
+          '-'
+        )}
+      </td>
+
+      <td class="cell-with-button">
+        <!-- Verificamos si v_arr es diferente de 1364 y ho_ini no está vacío -->
+        ${row.pri_bag ? (
+          // Si ambas condiciones se cumplen, mostramos el contenido con el botón
+          `${row.pri_bag} / ${row.ul_bag}` +
+          `<button class="btn green-btn rounded-circle small-btn" id="button-${index}" onclick="mostrarModalPersonalizado2(${index})">T</button>`
+        ) : (
+          // Si es false no llenará nada
+          '-'
+        )}
+      </td>
+
+      <td class="cell-with-button">
+        <!-- Verificamos si v_arr es diferente de 1364 y ho_ini no está vacío -->
+        ${row.dem !== null && row.dem !== ';;'? (
+          // Si ambas condiciones se cumplen, mostramos el contenido con el botón
+          `${row.dem}` +
+          `<button class="btn green-btn rounded-circle small-btn" id="button-${index}" onclick="mostrarModalPersonalizado3(${index})">D</button>`
+        ) : (
+          // Si es false no llenará nada
+          `-`
+        )}
+      </td>`;
+    
     tableBody.appendChild(newRow);
 
-    // Filas ocultas para los responsables
     var hiddenDataRow = document.createElement('tr');
     hiddenDataRow.className = 'hidden-data';
     hiddenDataRow.style.display = 'none';
@@ -69,16 +114,14 @@ function updateTable(data) {
       `<td><strong>RESPONSABLE ADU.</strong></td>
       <td colspan="3">${row.res_a || ''}</td>
       <td><strong>CIERRE ADU. </strong></td>
-      <td colspan="5">${row.cie || ''}</td>`
-      ;
+      <td colspan="5">${row.cie || ''}</td>`;
     tableBody.appendChild(hiddenDataRow);
 
-    // Inicializar los estados de las filas ocultas como falsos (no mostrados)
     hiddenStates.push(false, false);
+    //updateButtonColor(index);
   });
 }
 
-// Función para mostrar u ocultar las filas ocultas relacionadas con un botón
 function toggleData(index) {
   var start = index * 2;
   var end = start + 1;
@@ -95,35 +138,30 @@ function getData() {
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4 && xhr.status === 200) {
       var responseData = JSON.parse(xhr.responseText);
-      data = responseData.data; // Almacenar los datos en la variable global
+      data = responseData.data;
       updateTable(data);
     }
   };
   xhr.send();
 }
 
-// Función para abrir el modal
 function abrirModal() {
   var modal = document.getElementById('miModal');
   modal.style.display = 'flex';
 }
 
-// Función para cerrar el modal
 function cerrarModal() {
   var modal = document.getElementById('miModal');
   modal.style.display = 'none';
 }
 
-// Función para mostrar el modal cuando se hace clic en el botón personalizado
 function mostrarModalPersonalizado(index) {
   abrirModal();
   if (!data[index]) {
-    return; // Salir si no hay fila para el índice seleccionado
+    return;
   }
 
   currentRow = data[index];
-  //const coo = currentRow.sta;
-
   var modalContent = document.querySelector('.modal-content');
   modalContent.innerHTML = `
     <div class="model-content">
@@ -152,12 +190,10 @@ function mostrarModalPersonalizado(index) {
 function mostrarModalPersonalizado2(index) {
   abrirModal();
   if (!data[index]) {
-    return; // Salir si no hay fila para el índice seleccionado
+    return;
   }
 
   currentRow = data[index];
-  //const coo = currentRow.sta;
-
   var modalContent = document.querySelector('.modal-content');
   modalContent.innerHTML = `
     <div class="model-content">
@@ -173,5 +209,29 @@ function mostrarModalPersonalizado2(index) {
   `;
 }
 
+function mostrarModalPersonalizado3(index) {
+  abrirModal();
+  if (!data[index]) {
+    return;
+  }
+
+  currentRow = data[index];
+  var modalContent = document.querySelector('.modal-content');
+  modalContent.innerHTML = `
+    <div class="model-content">
+      <h4>Demoras</h4>
+      <p><b>ENCARGADO DE VUELO:</b></p>
+      <p>${currentRow.enc_vue || ''}</p>
+      <p><b>OBSERVACIONES:</b></p>
+      <p>${currentRow.obs_gen || ''}</p>
+      <p><b>OBSERVACIONES DEMORAS:</b></p>
+      <p>${currentRow.obs_dem || ''}</p>
+      <p><b>DELAY:</b></p>
+      <p>${formatTime(currentRow.dem_min) || ''}</p>
+    </div>
+    <button class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
+  `;
+}
+
 getData();
-setInterval(getData, 60000);
+setInterval(getData, 30000);

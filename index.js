@@ -3,7 +3,6 @@ require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const { Pool } = require('pg');
-
 //const moment = require('moment');
 
 const PORT = process.env.PORT || 3001;
@@ -11,7 +10,6 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
-
 
 const pool = new Pool({
   user: process.env.PGUSER || "postgres",
@@ -61,12 +59,14 @@ fetchDataAndInsert();
 setInterval(fetchDataAndInsert, 60000);
 
 // Resto del código...
+
 app.get('/', async (req, res) => {
   try {
     const query = `
     SELECT i.cod_ae, i.sta, i.stdd, d.pea, d.eta, d.ata, i.v_arr, i.v_dep, e.res,
     e.ho_ini, e.ho_fin,a.res_a ,a.pri_bag, a.ul_bag, a.cie, d.etd, d.atd, d.stat,
-    d.dem, i.orig, i.dest, e.coo
+    d.dem, i.orig, i.dest, e.toi, e.coo, e.gal, e.asp, e.cab_pax, e.obs_cli, e.obs as obs_e,
+    a.obs as obs_a, d.enc_vue, d.obs_gen, d.obs_dem
     FROM itinera i
     LEFT JOIN
     aduan a ON a.vuelo = i.vuelo
@@ -94,8 +94,8 @@ app.get('/data', async (req, res) => {
     const query = `
     SELECT i.cod_ae, i.sta, i.stdd, d.pea, d.eta, d.ata, i.v_arr, i.v_dep, e.res,
     e.ho_ini, e.ho_fin,a.res_a ,a.pri_bag, a.ul_bag, a.cie, d.etd, d.atd, d.stat,
-    d.dem, i.orig, i.dest, e.coo, e.toi, e.gal, e.asp, e.cab_pax, e.obs as obs_e, 
-    e.obs_cli, a.cie, a.obs as obs_a, a.res_a
+    d.dem, i.orig, i.dest, e.toi, e.coo, e.gal, e.asp, e.cab_pax, e.obs_cli, e.obs as obs_e,
+    a.obs as obs_a, d.enc_vue, d.obs_gen, d.obs_dem, d.dem_min, d.obs_dem
     FROM itinera i
     LEFT JOIN
     aduan a ON a.vuelo = i.vuelo
