@@ -47,11 +47,11 @@ function updateTable(data) {
     var vArr = row.v_arr;
     var newRow = document.createElement('tr');
     newRow.innerHTML = `
-      <td>
+      <!-- <td>
         <button class="btn btn-primary rounded-circle small-btn" onclick="toggleData(${index})">
             <i class="fa-solid fa-plane"></i>
         </button>
-      </td>
+      </td> -->
       <td>${(row.cod_ae && row.v_arr && row.v_dep) ? `${row.cod_ae} ${row.v_arr}<br>${row.cod_ae} ${row.v_dep}` : (row.cod_ae || '-')}</td>
       <td class="text-center align-middle">${row.pea || ''}</td>
       <td class="text-center align-middle">${(row.orig && row.dest) ? `${row.orig}<br>${row.dest}` : row.orig || ''}</td>
@@ -96,29 +96,28 @@ function updateTable(data) {
         )}
       </td>`;
     
-    tableBody.appendChild(newRow);
+     tableBody.appendChild(newRow);
 
-    var hiddenDataRow = document.createElement('tr');
+    /*var hiddenDataRow = document.createElement('tr');
     hiddenDataRow.className = 'hidden-data';
     hiddenDataRow.style.display = 'none';
     hiddenDataRow.innerHTML = 
       `<td><strong>RESPONSABLE CAB.</strong></td>
       <td colspan="3">${row.res || ''}</td>
       <td><strong>EQUIPO CAB.</strong></td>`;
-    tableBody.appendChild(hiddenDataRow);
+    tableBody.appendChild(hiddenDataRow);*/
 
-    hiddenDataRow = document.createElement('tr');
+    /*hiddenDataRow = document.createElement('tr');
     hiddenDataRow.className = 'hidden-data';
     hiddenDataRow.style.display = 'none';
     hiddenDataRow.innerHTML =
       `<td><strong>RESPONSABLE ADU.</strong></td>
       <td colspan="3">${row.res_a || ''}</td>
       <td><strong>CIERRE ADU. </strong></td>
-      <td colspan="5">${row.cie || ''}</td>`;
-    tableBody.appendChild(hiddenDataRow);
+      <td colspan="5">${row.cie || ''}</td>`;*/
+    //tableBody.appendChild(hiddenDataRow);
 
     hiddenStates.push(false, false);
-    //updateButtonColor(index);
   });
 }
 
