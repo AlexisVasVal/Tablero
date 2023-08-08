@@ -66,7 +66,7 @@ app.get('/', async (req, res) => {
     SELECT i.cod_ae, i.sta, i.stdd, d.pea, d.eta, d.ata, i.v_arr, i.v_dep, e.res,
     e.ho_ini, e.ho_fin,a.res_a ,a.pri_bag, a.ul_bag, a.cie, d.etd, d.atd, d.stat,
     d.dem, i.orig, i.dest, e.toi, e.coo, e.gal, e.asp, e.cab_pax, e.obs_cli, 
-    e.obs as obs_e, a.obs as obs_a, d.enc_vue, d.obs_gen, d.obs_dem, d.dem_min, 
+    e.obs as obs_e, a.obs as obs_a, d.enc_vue, d.obs_gen, d.obs_dem, d.min_dem, 
     d.obs_dem, e.ata_pre
     FROM itinera i
     LEFT JOIN
@@ -96,7 +96,7 @@ app.get('/data', async (req, res) => {
     SELECT i.cod_ae, i.sta, i.stdd, d.pea, d.eta, d.ata, i.v_arr, i.v_dep, e.res,
     e.ho_ini, e.ho_fin, a.res_a,a.pri_bag, a.ul_bag, a.cie, d.etd, d.atd, d.stat,
     d.dem, i.orig, i.dest, e.toi, e.coo, e.gal, e.asp, e.cab_pax, e.obs_cli, 
-    e.obs as obs_e, a.obs as obs_a, d.enc_vue, d.obs_gen, d.obs_dem, d.dem_min, 
+    e.obs as obs_e, a.obs as obs_a, d.enc_vue, d.obs_gen, d.obs_dem, d.min_dem, 
     d.obs_dem, e.ata_pre
     FROM itinera i
     LEFT JOIN

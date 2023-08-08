@@ -89,6 +89,18 @@ function formatDate(dateString) {
   return `${day} ${month} ${hours}:${minutes}`;
 }
 
+function formatTime1(dateString) {
+  const date = new Date(dateString);
+  if (isNaN(date)) {
+    return '';
+  }
+  //const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  //const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
 function formatTime(timeString) {
   const timeParts = timeString.split(':'); // Dividimos la cadena en partes (horas, minutos, segundos)
   if (timeParts.length >= 2) {
@@ -126,7 +138,9 @@ function updateTable(data) {
       <td class="cell-with-button">
         ${row.ho_ini ? (
           `${formatTime(row.ho_ini)} / ${row.ho_fin !== null ? formatTime(row.ho_fin) : ''}` +
-          `<button class="btn small-btn ho-ini-button" onclick="mostrarModalPersonalizado(${index})">T</button>`
+          `<button class="btn small-btn ho-ini-button" onclick="mostrarModalPersonalizado(${index})">
+          <i class="fa-solid fa-broom"></i>
+          </button>`
         ) : (
           '-'
         )}
@@ -138,7 +152,9 @@ function updateTable(data) {
         ${row.pri_bag ?  (
           // Si ambas condiciones se cumplen, mostramos el contenido con el botón
           `${formatTime(row.pri_bag)} / ${row.ul_bag !== null ? formatTime(row.ul_bag) : ''}` +
-          `<button class="btn small-btn ho-ini-bag" id="button-${index}" onclick="mostrarModalPersonalizado2(${index})">T</button>`
+          `<button class="btn small-btn ho-ini-bag" id="button-${index}" onclick="mostrarModalPersonalizado2(${index})">
+          <i class="fa-solid fa-cart-flatbed-suitcase"></i>
+          </button>`
         ) : (
           // Si es false no llenará nada
           '-'
@@ -150,7 +166,9 @@ function updateTable(data) {
         ${row.dem !== null && row.dem !== ';;'? (
           // Si ambas condiciones se cumplen, mostramos el contenido con el botón
           `${row.dem}` +
-          `<button class="btn red-btn rounded-circle small-btn" id="button-${index}" onclick="mostrarModalPersonalizado3(${index})">D</button>`
+          `<button class="btn red-btn rounded-circle small-btn" id="button-${index}" onclick="mostrarModalPersonalizado3(${index})">
+          <i class="fa-solid fa-plane-departure"></i>
+          </button>`
         ) : (
           // Si es false no llenará nada
           `-`
@@ -297,7 +315,7 @@ function mostrarModalPersonalizado3(index) {
       <p><b>OBSERVACIONES DEMORAS:</b></p>
       <p>${currentRow.obs_dem || ''}</p>
       <p><b>DELAY:</b></p>
-      <p>${currentRow.dem_min || ''}</p>
+      <p>${currentRow.min_dem || ''}</p>
     </div>
     <button class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
   `;
