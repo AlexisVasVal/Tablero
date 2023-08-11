@@ -15,11 +15,33 @@
     cursor: pointer;
   }
   
-  /* Estilo para el botón verde */
-  .cell-with-button .green-btn {
-    background-color: green;
-    color: white; /* Color del texto en el botón */
-  }
+/* Estilo para la celda que contiene el botón */
+.cell-with-button {
+  position: relative;
+}
+
+/* Estilo para el botón verde */
+.cell-with-button .green-btn {
+  background-color: green;
+  color: white; /* Color del texto en el botón */
+}
+
+/* Estilo para el botón amarillo */
+.cell-with-button .yellow-btn {
+  background-color: yellow;
+  color: black; /* Color del texto en el botón */
+}
+
+/* Estilo para el botón rojo */
+.cell-with-button .red-btn {
+  background-color: red;
+  color: white; /* Color del texto en el botón */
+}
+
+.cell-with-button .transparent-btn {
+  background-color: transparent;
+  color: white; /* Color del texto en el botón */
+}
 
   table, td {
     font-size: 13.5px;

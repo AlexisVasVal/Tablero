@@ -1,13 +1,76 @@
 var aerolineaTiempos = {
-  '342': [0, 2, 3], // Y4
-  '6653': [0, 2, 3], // iberia
-  '340': [0, 2, 3], // Y4
-  '3544': [0, 4, 3], // conviasa
-  '4110': [0, 2, 3], // Q6
-  '6659': [0, 2, 3], // Iberia
-  '748': [0, 2, 3], // boa
-  '1825': [0, 2, 3], // jetblue
+  '342': [2, 5], // Y4
+  '6653': [55, 60], // iberia
+  '340': [2, 5], // Y4
+  '3544': [25, 30], // conviasa
+  '4110': [2, 5], // Q6
+  '6659': [25, 30], // Iberia
+  '748': [10, 15], // boa
+  '1825': [5, 10], // jetblue
 };
+
+var aerolineaTiempos2 = {
+  '342': [20, 25], // Y4
+  '6653': [55, 60], // iberia
+  '340': [20, 25], // Y4
+  '3544': [55, 60], // conviasa
+  '4110': [20, 25], // Q6
+  '6659': [55, 60], // Iberia
+  '748': [20, 25], // boa
+  '1825': [20, 25], // jetblue
+};
+
+function updateButtonColor(buttonElement, startTime, endTime, arrivalFlight) {
+  const now = new Date();
+  const start = new Date(now);
+  start.setHours(parseInt(startTime.split(':')[0]));
+  start.setMinutes(parseInt(startTime.split(':')[1]));
+
+  const end = new Date(now);
+  end.setHours(parseInt(endTime.split(':')[0]));
+  end.setMinutes(parseInt(endTime.split(':')[1]));
+
+  // Calculamos la diferencia en minutos entre endTime y startTime
+  const timeDifferenceMinutes = (end - start) / (1000 * 60);
+
+  // Comparamos la diferencia de tiempo para asignar el color adecuado
+  if (timeDifferenceMinutes <= aerolineaTiempos[arrivalFlight][0]) {
+    buttonElement.classList.remove('yellow-btn', 'red-btn');
+    buttonElement.classList.add('green-btn');
+  } else if (timeDifferenceMinutes <= aerolineaTiempos[arrivalFlight][1]) {
+    buttonElement.classList.remove('green-btn', 'red-btn');
+    buttonElement.classList.add('yellow-btn');
+  } else {
+    buttonElement.classList.remove('green-btn', 'yellow-btn');
+    buttonElement.classList.add('red-btn');
+  }
+}
+
+function updateButtonColor2(buttonElement, startTime, endTime, arrivalFlight) {
+  const now = new Date();
+  const start = new Date(now);
+  start.setHours(parseInt(startTime.split(':')[0]));
+  start.setMinutes(parseInt(startTime.split(':')[1]));
+
+  const end = new Date(now);
+  end.setHours(parseInt(endTime.split(':')[0]));
+  end.setMinutes(parseInt(endTime.split(':')[1]));
+
+  // Calculamos la diferencia en minutos entre endTime y startTime
+  const timeDifferenceMinutes = (end - start) / (1000 * 60);
+
+  // Comparamos la diferencia de tiempo para asignar el color adecuado
+  if (timeDifferenceMinutes <= aerolineaTiempos2[arrivalFlight][0]) {
+    buttonElement.classList.remove('yellow-btn', 'red-btn');
+    buttonElement.classList.add('green-btn');
+  } else if (timeDifferenceMinutes <= aerolineaTiempos2[arrivalFlight][1]) {
+    buttonElement.classList.remove('green-btn', 'red-btn');
+    buttonElement.classList.add('yellow-btn');
+  } else {
+    buttonElement.classList.remove('green-btn', 'yellow-btn');
+    buttonElement.classList.add('red-btn');
+  }
+}
 
 var currentRow = {};
 
@@ -17,25 +80,26 @@ function formatDate(dateString) {
   if (isNaN(date)) {
     return '';
   }
-  const year = date.getFullYear();
+  //const year = date.getFullYear();
   const month = months[date.getMonth()];
   const day = String(date.getDate()).padStart(2, '0');
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
+  //const seconds = String(date.getSeconds()).padStart(2, '0');
   return `${day} ${month} ${hours}:${minutes}`;
 }
 
-function formatTime(dateString) {
-  const date = new Date(dateString);
-  if (isNaN(date)) {
+function formatTime(timeString) {
+  const timeParts = timeString.split(':'); // Dividimos la cadena en partes (horas, minutos, segundos)
+  if (timeParts.length >= 2) {
+    const hours = timeParts[0];
+    const minutes = timeParts[1];
+    return `${hours}:${minutes}`;
+  } else {
     return '';
   }
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  return `${hours}:${minutes}`;
 }
+
 
 var hiddenStates = [];
 
@@ -44,7 +108,6 @@ function updateTable(data) {
   tableBody.innerHTML = '';
 
   data.forEach(function (row, index) {
-    var vArr = row.v_arr;
     var newRow = document.createElement('tr');
     newRow.innerHTML = `
       <!-- <td>
@@ -61,23 +124,21 @@ function updateTable(data) {
       <td class="text-center align-middle">${row.ata ? `${formatDate(row.ata)}${row.atd ? '<br>' + formatDate(row.atd) : '-'}` : '-'}</td>
 
       <td class="cell-with-button">
-        <!-- Verificamos si v_arr es diferente de 1364 y ho_ini no está vacío -->
         ${row.ho_ini ? (
-          // Si ambas condiciones se cumplen, mostramos el contenido con el botón
-          `${row.ho_ini} / ${row.ho_fin}` +
-          `<button class="btn green-btn rounded-circle small-btn" id="button-${index}" onclick="mostrarModalPersonalizado(${index})">T</button>`
+          `${formatTime(row.ho_ini)} / ${row.ho_fin !== null ? formatTime(row.ho_fin) : ''}` +
+          `<button class="btn small-btn ho-ini-button" onclick="mostrarModalPersonalizado(${index})">T</button>`
         ) : (
-          // Si es false no llenará nada
           '-'
         )}
       </td>
 
+
       <td class="cell-with-button">
         <!-- Verificamos si v_arr es diferente de 1364 y ho_ini no está vacío -->
-        ${row.pri_bag ? (
+        ${row.ata_pre ?  (
           // Si ambas condiciones se cumplen, mostramos el contenido con el botón
-          `${row.pri_bag} / ${row.ul_bag}` +
-          `<button class="btn green-btn rounded-circle small-btn" id="button-${index}" onclick="mostrarModalPersonalizado2(${index})">T</button>`
+          `${formatTime(row.pri_bag)} / ${row.ul_bag !== null ? formatTime(row.ul_bag) : ''}` +
+          `<button class="btn small-btn ho-ini-bag" id="button-${index}" onclick="mostrarModalPersonalizado2(${index})">T</button>`
         ) : (
           // Si es false no llenará nada
           '-'
@@ -89,12 +150,22 @@ function updateTable(data) {
         ${row.dem !== null && row.dem !== ';;'? (
           // Si ambas condiciones se cumplen, mostramos el contenido con el botón
           `${row.dem}` +
-          `<button class="btn green-btn rounded-circle small-btn" id="button-${index}" onclick="mostrarModalPersonalizado3(${index})">D</button>`
+          `<button class="btn red-btn rounded-circle small-btn" id="button-${index}" onclick="mostrarModalPersonalizado3(${index})">D</button>`
         ) : (
           // Si es false no llenará nada
           `-`
         )}
       </td>`;
+
+    var hoIniButton = newRow.querySelector('.ho-ini-button');
+    if (hoIniButton) {
+      updateButtonColor(hoIniButton, row.ho_ini, row.ho_fin, row.v_arr);
+    }
+
+    var hoIniBag = newRow.querySelector('.ho-ini-bag');
+    if (hoIniBag) {
+      updateButtonColor2(hoIniBag, row.pri_bag, row.ul_bag, row.v_arr);
+    }
     
      tableBody.appendChild(newRow);
 
