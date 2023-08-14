@@ -8,7 +8,7 @@ var aerolineaTiempos = {
   '748': [10, 15], // boa
   '1825': [5, 10], // jetblue
 };
-
+//asd
 var aerolineaTiempos2 = {
   '342': [20, 25], // Y4
   '6653': [55, 60], // iberia
@@ -297,7 +297,7 @@ function mostrarModalPersonalizado3(index) {
       <p><b>OBSERVACIONES DEMORAS:</b></p>
       <p>${currentRow.obs_dem || ''}</p>
       <p><b>DELAY:</b></p>
-      <p>${formatTime(currentRow.dem_min) || ''}</p>
+      <p>${currentRow.dem_min || ''}</p>
     </div>
     <button class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
   `;
