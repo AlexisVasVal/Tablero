@@ -304,4 +304,4 @@ function mostrarModalPersonalizado3(index) {
 }
 
 getData();
-setInterval(getData, 30000);
+setInterval(getData, 60000);
