@@ -135,7 +135,7 @@ function updateTable(data) {
 
       <td class="cell-with-button">
         <!-- Verificamos si v_arr es diferente de 1364 y ho_ini no está vacío -->
-        ${row.ata_pre ?  (
+        ${row.pri_bag ?  (
           // Si ambas condiciones se cumplen, mostramos el contenido con el botón
           `${formatTime(row.pri_bag)} / ${row.ul_bag !== null ? formatTime(row.ul_bag) : ''}` +
           `<button class="btn small-btn ho-ini-bag" id="button-${index}" onclick="mostrarModalPersonalizado2(${index})">T</button>`
