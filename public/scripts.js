@@ -3,24 +3,26 @@ var aerolineaTiempos = {
   '6653': [55, 60], // IBERIA IB6653
   '175': [55, 60], // AIREUROPA UX
   '340': [2, 5], // VOLARIS Y4
-  '3544': [25, 30], // CONVIASA
   '4110': [2, 5], // VOLARIS Q6
   '6659': [25, 30], // IBERIA IB6659
   '748': [10, 15], // BOA OB
   '1825': [5, 10], // JETBLUE B6
 };
-//asd
+
+
 var aerolineaTiempos2 = {
   '342': [20, 25], // VOLARIS Y4
   '6653': [55, 60], // IBERIA IB6653
   '175': [55, 60], // AIREUROPA UX
   '340': [20, 25], // VOLARIS Y4
-  '3544': [55, 60], // CONVIASA
   '4110': [20, 25], // VOLARIS Q6
   '6659': [55, 60], // IBERIA IB6659
   '748': [20, 25], // BOA OB
   '1825': [20, 25], // JETBLUE B6
 };
+
+getData();
+var intervalId = setInterval(getData, 60000);
 
 function updateButtonColor(buttonElement, startTime, endTime, arrivalFlight) {
   const now = new Date();
@@ -141,7 +143,7 @@ function updateTable(data) {
         ${row.ho_ini ? (
           `${formatTime(row.ho_ini)} / ${row.ho_fin !== null ? formatTime(row.ho_fin) : ''}` +
           `<button class="btn small-btn ho-ini-button" onclick="mostrarModalPersonalizado(${index})">
-          <i class="fa-solid fa-broom"></i>
+          <i class="fa-solid fa-pump-soap"></i>
           </button>`
         ) : (
           '-'
@@ -187,7 +189,7 @@ function updateTable(data) {
       updateButtonColor2(hoIniBag, row.pri_bag, row.ul_bag, row.v_arr);
     }
     
-     tableBody.appendChild(newRow);
+    tableBody.appendChild(newRow);
 
     /*var hiddenDataRow = document.createElement('tr');
     hiddenDataRow.className = 'hidden-data';
@@ -226,13 +228,58 @@ function getData() {
   var xhr = new XMLHttpRequest();
   xhr.open('GET', '/data', true);
   xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      var responseData = JSON.parse(xhr.responseText);
-      data = responseData.data;
-      updateTable(data);
-    }
+      if (xhr.readyState === 4 && xhr.status === 200) {
+          var responseData = JSON.parse(xhr.responseText);
+          data = responseData.data;
+          updateTable(data);
+
+          // Reinicia el intervalo
+          clearInterval(intervalId);
+          intervalId = setInterval(getData, 60000);
+      }
   };
   xhr.send();
+}
+
+
+function filtrarPorFecha() {
+  var fechaInicio = document.getElementById('fechaInicio').value;
+  var fechaFin = document.getElementById('fechaFin').value;
+  var aerolinea = document.getElementById('aerolinea').value;
+
+  clearInterval(intervalId);
+
+  if (aerolinea && (!fechaInicio || !fechaFin)) {
+    alert('Por favor, selecciona ambas fechas cuando especificas una aerolínea.');
+    return;
+}
+
+if ((fechaInicio && fechaFin) || aerolinea) {
+  obtenerDatosFiltrados(fechaInicio, fechaFin, aerolinea);
+  
+  } else {
+    intervalId = setInterval(getData, 60000);
+    alert('Por favor, selecciona al menos una fecha o una aerolínea.');
+  }
+
+}
+
+function obtenerDatosFiltrados(fechaInicio, fechaFin, aerolinea) {
+  
+  var url = '/filtraje?';
+  var params = [];
+  if (fechaInicio) params.push('inicio=' + encodeURIComponent(fechaInicio));
+  if (fechaFin) params.push('fin=' + encodeURIComponent(fechaFin));
+  if (aerolinea) params.push('aerolinea=' + encodeURIComponent(aerolinea));
+
+
+  fetch(url + params.join('&'))
+        .then(response => response.json())
+        .then(datos => {
+            // Procesa los datos recibidos
+            updateTable(datos);
+        });
+  
 }
 
 function abrirModal() {
@@ -322,6 +369,3 @@ function mostrarModalPersonalizado3(index) {
     <button class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
   `;
 }
-
-getData();
-setInterval(getData, 60000);

@@ -3,6 +3,19 @@
     position: relative;
   }
 
+  #titulo {
+    color: #a90707; /* Color del texto */
+    font-size: 3em; /* Tamaño del texto */
+    font-weight: bold;
+    font-family: 'Open Sans', sans-serif; /* Tipo de fuente */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Sombra del texto */
+  }
+
+  .label-resaltado {
+    color: black; /* Puedes ajustar el color según tus preferencias */
+    font-weight: bold; /* Otras propiedades de estilo, si es necesario */
+}
+
   .cell-with-button button {
     position: absolute;
     right: 5px; /* Ajusta este valor según desees el espacio desde el borde derecho asd*/

@@ -6,10 +6,49 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="/style.css">
   <script src="/scripts.js"></script>
+  <script>
+    
+    function volver(){
+      document.getElementById('aerolinea').value = ''; // Limpiar campo de aerolínea
+      document.getElementById('fechaInicio').value = ''; // Limpiar campo de fecha de inicio
+      document.getElementById('fechaFin').value = '';
+      getData();
+    }
+    
+  </script>
+
 </head>
 <body>
   <div class="container mt-5">
-    <h2></h2>
+    <h2 id="titulo">TABLERO DIARIO DE VUELOS</h2>
+    <hr style="border-top:1px dotted #000;"/>
+    <div class="row">
+      <div class="col-md-3">
+        <label class="label-resaltado">Aerolínea:</label>
+        <select class="form-select" aria-label="Default select example" id="aerolinea">
+          <option value="">Seleccionar aerolínea</option>
+          <option value="%VOLARIS%">VOLARIS</option>
+          <option value="%IBERIA%">IBERIA</option>
+          <option value="%AIREUROPA%">AIREUROPA</option>
+          <option value="%JETBLUE%">JETBLUE</option>
+          <option value="%BOLIVIANA DE AVIACION%">BOA</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+          <label class="label-resaltado">Fecha Desde:</label>
+          <input type="date" class="form-control" placeholder="Start" id="fechaInicio">
+      </div>
+      <div class="col-md-2">
+          <label class="label-resaltado">Hasta:</label>
+          <input type="date" class="form-control" placeholder="End" id="fechaFin">
+      </div>
+      <div class="col-md-4 align-self-end">
+          <button class="btn btn-primary" name="search" onclick="filtrarPorFecha()">Filtrar<span class="glyphicon glyphicon-search"></span></button>
+          <a type="button" class="btn btn-success" onclick="volver()">Volver<span class="glyphicon glyphicon-refresh"></span></a>
+      </div>
+  </div>
+  <br>
+  <br>
     <div class="table-responsive">
       <table class="table table-bordered table-striped">
         <thead>

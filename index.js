@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const { Pool } = require('pg');
-//const moment = require('moment'); asd
+//const moment = require('moment');
 
 const PORT = process.env.PORT || 3001;
 
@@ -12,11 +12,11 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
 const pool = new Pool({
-  user: process.env.PGUSER || "postgres",
-  host: process.env.PGHOST || "localhost",
-  database: process.env.PGDATABASE || "tablero",
-  password: process.env.PGPASSWORD || "123456",
-  port: process.env.PGPORT || "5432",
+  user: process.env.PGUSER, 
+  host: process.env.PGHOST,
+  database: process.env.PGDATABASE,
+  password: process.env.PGPASSWORD,
+  port: process.env.PGPORT,
 });
 
 
@@ -29,9 +29,9 @@ async function getDataAndInsert(table, url, columns) {
       try {
         const insertQuery = {
           text: `INSERT INTO ${table} (${columns.join(', ')}) 
-                 VALUES (${columns.map((_, index) => `$${index + 1}`).join(', ')}) 
-                 ON CONFLICT (${columns[0]}) DO UPDATE 
-                 SET ${columns.slice(1).map((column, index) => `${column} = $${index + 2}`).join(', ')}`,
+                VALUES (${columns.map((_, index) => `$${index + 1}`).join(', ')}) 
+                ON CONFLICT (${columns[0]}) DO UPDATE 
+                SET ${columns.slice(1).map((column, index) => `${column} = $${index + 2}`).join(', ')}`,
           values: columns.map(column => row[column]),
         };
 
@@ -117,6 +117,41 @@ app.get('/data', async (req, res) => {
   } catch (error) {
     console.error('NO SALE PS 3:', error);
     res.status(500).send('NO SALE PS 4');
+  }
+});
+
+app.get('/filtraje', async (req, res) => {
+  const fechaInicio = req.query.inicio;
+  const fechaFin = req.query.fin;
+  const aerolinea = req.query.aerolinea;
+
+  let query = `
+      SELECT i.cod_ae, i.sta, i.stdd, d.pea, d.eta, d.ata, i.v_arr, i.v_dep, e.res,
+          e.ho_ini, e.ho_fin, a.res_a, a.pri_bag, a.ul_bag, a.cie, d.etd, d.atd, d.stat,
+          d.dem, i.orig, i.dest, e.toi, e.coo, e.gal, e.asp, e.cab_pax, e.obs_cli, 
+          e.obs as obs_e, a.obs as obs_a, d.enc_vue, d.obs_gen, d.obs_dem, d.min_dem, 
+          d.obs_dem, e.ata_pre
+      FROM itinera i
+      LEFT JOIN aduan a ON a.vuelo = i.vuelo
+      LEFT JOIN evacab e ON i.vuelo = e.vuelo
+      LEFT JOIN datosgenerales d ON i.vuelo = d.vuelo
+      WHERE DATE(sta) BETWEEN $1 AND $2
+  `;
+
+  const params = [fechaInicio, fechaFin];
+
+    if (aerolinea) {
+        query += ` AND i.aer LIKE $3`;
+        params.push(`%${aerolinea}%`);
+    }
+
+    query += ` ORDER BY sta ASC`;
+
+  try {
+      const resultados = await pool.query(query, params);
+      res.json(resultados.rows);
+  } catch (error) {
+      res.status(500).send('Error en el servidor: ' + error.message);
   }
 });
 
