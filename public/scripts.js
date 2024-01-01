@@ -1,23 +1,25 @@
 var aerolineaTiempos = {
-  '342': [2, 5], // Y4
-  '6653': [55, 60], // iberia
-  '340': [2, 5], // Y4
-  '3544': [25, 30], // conviasa
-  '4110': [2, 5], // Q6
-  '6659': [25, 30], // Iberia
-  '748': [10, 15], // boa
-  '1825': [5, 10], // jetblue
+  '342': [2, 5], // VOLARIS Y4
+  '6653': [55, 60], // IBERIA IB6653
+  '175': [55, 60], // AIREUROPA UX
+  '340': [2, 5], // VOLARIS Y4
+  '3544': [25, 30], // CONVIASA
+  '4110': [2, 5], // VOLARIS Q6
+  '6659': [25, 30], // IBERIA IB6659
+  '748': [10, 15], // BOA OB
+  '1825': [5, 10], // JETBLUE B6
 };
 //asd
 var aerolineaTiempos2 = {
-  '342': [20, 25], // Y4
-  '6653': [55, 60], // iberia
-  '340': [20, 25], // Y4
-  '3544': [55, 60], // conviasa
-  '4110': [20, 25], // Q6
-  '6659': [55, 60], // Iberia
-  '748': [20, 25], // boa
-  '1825': [20, 25], // jetblue
+  '342': [20, 25], // VOLARIS Y4
+  '6653': [55, 60], // IBERIA IB6653
+  '175': [55, 60], // AIREUROPA UX
+  '340': [20, 25], // VOLARIS Y4
+  '3544': [55, 60], // CONVIASA
+  '4110': [20, 25], // VOLARIS Q6
+  '6659': [55, 60], // IBERIA IB6659
+  '748': [20, 25], // BOA OB
+  '1825': [20, 25], // JETBLUE B6
 };
 
 function updateButtonColor(buttonElement, startTime, endTime, arrivalFlight) {
